@@ -12,8 +12,8 @@
   <p>Loading</p>
 {:then}
   <div class="space-y-4">
-    <h1 class="text-2xl font-bold">Total: {$counter_store.total}</h1>
+    <h1 class="text-2xl font-bold">Riley has Womp Womp'd: {$counter_store.total}</h1>
     <p>Last Updated: {format($counter_store.lastUpdated, "MM/dd 'at' hh:mm a")}</p>
-    <Button on:click={increment} size="lg" class="w-full bg-red-500 hover:bg-red-300" >Add to the Total</Button>
+    <Button on:click={increment} size="lg" class="w-full bg-red-500 hover:bg-red-300 font-bold text-xl" >Add to the Total</Button>
   </div>
 {/await}
