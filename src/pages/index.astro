@@ -20,7 +20,7 @@ import Counter from '$lib/components/counter.svelte'
 					<CardTitle class={"text-4xl"}>Riley's <br> Womp Womp Counter</CardTitle>
 				</CardHeader>
 				<CardContent>
-					<Counter client:load />
+					<Counter client:load isAuthed={Astro.cookies.has('id')}/>
 				</CardContent>
 			</Card>
 		</main>
