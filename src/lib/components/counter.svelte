@@ -20,7 +20,7 @@
 {:then}
   <div class="space-y-4">
     <h1 class="text-2xl font-bold">
-      Riley has Womp Womp'd: {$counter_store.total}
+      Riley has Womp Womp'd: {$counter_store.total} times
     </h1>
     <p>
       Last Updated: {format($counter_store.lastUpdated, "MM/dd 'at' hh:mm a")}
