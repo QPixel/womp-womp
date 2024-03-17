@@ -1,0 +1,29 @@
+---
+export const prerender = true;
+import '../styles/global.css'
+import {Card, CardContent, CardTitle, CardHeader} from '$lib/components/ui/card'
+import Counter from '$lib/components/counter.svelte'
+
+---
+
+<html lang="en" class="dark">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Womp Womp</title>
+	</head>
+	<body class="bg-background min-h-screen w-full">
+		<main class="min-h-screen flex justify-center items-center">
+			<Card>
+				<CardHeader>
+					<CardTitle class={"text-4xl"}>Womp Womp Counter</CardTitle>
+				</CardHeader>
+				<CardContent>
+					<Counter client:load />
+				</CardContent>
+			</Card>
+		</main>
+	</body>
+</html>
