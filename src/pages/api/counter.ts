@@ -1,6 +1,8 @@
 import type { APIRoute } from "astro";
 import {Womps, db, eq} from "astro:db";
 
+export const prerendered = false;
+
 export const GET: APIRoute = async ({}) => {
     const womps = (await db.select().from(Womps))[0];
 
@@ -22,7 +24,7 @@ export const GET: APIRoute = async ({}) => {
     }
 };
 
-export const PATCH: APIRoute = async ({request}) => {
+export const PATCH: APIRoute = async ({}) => {
     const lastUpdated = new Date();
     let data = await db.select({
         old_total: Womps.total,

@@ -14,7 +14,7 @@ function getCounter() {
             set(json);
         },
         update,
-        increment: async (current: number) => {
+        increment: async () => {
             const data = await fetch('/api/counter', {
                 method: 'PATCH',
                 headers: {
