@@ -22,6 +22,6 @@
     {#if didError}
       <p class="text-red-500">{error}</p>
     {/if}
-    <Button on:click={increment} size="lg" class="w-full bg-red-500 hover:bg-red-300 font-bold text-xl" >Add to the Total</Button>
+    <Button on:click={increment} size="lg" class="w-full bg-red-500 hover:bg-red-300 font-bold text-xl" disabled={didError} >Add to the Total</Button>
   </div>
 {/await}
