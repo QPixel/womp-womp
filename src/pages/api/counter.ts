@@ -27,7 +27,7 @@ export const GET: APIRoute = async ({}) => {
 
 export const PATCH: APIRoute = async ({cookies}) => {
     if (!cookies.has('id')) {
-        return new Response("You must be logged in to increment", {status: 401});
+        return new Response("You must have permission to change the counter!", {status: 401});
     }
     let resetAt = compareAsc(new Date(), cookies.get('resetAt')!.value);
     if (resetAt >= 0) {

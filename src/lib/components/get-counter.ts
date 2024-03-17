@@ -20,12 +20,10 @@ function getCounter() {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-            }).then((res) =>{
-                if (res.status === 401) {
-                    throw new Error('You must be logged in to increment');
-                }
-                if (res.status === 400) {
-                    throw new Error("You've tried to increment too many times");
+            }).then(async (res) =>{
+                if (!res.ok) {
+                    let message = await res.text();
+                    throw new Error(message);
                 }
                 return res;
             });
