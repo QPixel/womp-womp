@@ -4,7 +4,7 @@
   import { Button } from "$lib/components/ui/button";
 
   export const increment = () => {
-    counter_store.increment($counter_store.total);
+    counter_store.increment();
   };
 </script>
 

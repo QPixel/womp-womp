@@ -5,6 +5,7 @@ const Womps = defineTable({
     lastUpdated: column.date({default: new Date()}),
     total: column.number(),
     id: column.number({primaryKey: true}),
+    updated_by: column.number({default: 0}),
   }
 })
 // https://astro.build/db/config

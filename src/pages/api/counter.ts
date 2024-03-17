@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import {Womps, db, eq} from "astro:db";
+import { compareAsc } from "date-fns";
 
 export const prerendered = false;
 
@@ -24,7 +25,28 @@ export const GET: APIRoute = async ({}) => {
     }
 };
 
-export const PATCH: APIRoute = async ({}) => {
+export const PATCH: APIRoute = async ({cookies}) => {
+    if (!cookies.has('id')) {
+        return new Response("You must be logged in to increment", {status: 401});
+    }
+    let resetAt = compareAsc(new Date(), cookies.get('resetAt')!.value);
+    if (resetAt >= 0) {
+        cookies.set('triedToIncrement', '0', {
+            path: '/',
+        
+        });
+        cookies.set('resetAt', new Date(new Date().getTime() + 1000 * 60 * 60 * 24).toISOString(), {
+            path: '/',
+        });
+    }
+    if (cookies.get('triedToIncrement')!.number() > 5 && resetAt == -1) {
+        return new Response("You've tried to increment too many times", {status: 400});
+    }
+    
+    cookies.set('triedToIncrement', `${(cookies.get('triedToIncrement')?.number() || 0) + 1}`, {
+        path: '/',
+    });
+
     const lastUpdated = new Date();
     let data = await db.select({
         old_total: Womps.total,
@@ -33,6 +55,7 @@ export const PATCH: APIRoute = async ({}) => {
     await db.update(Womps).set({
         lastUpdated: lastUpdated,
         total: data[0].old_total + 1,
+        updated_by: cookies.get('id')!.number()
     }).where(eq(Womps.id, 1));
 
     return new Response(JSON.stringify({
