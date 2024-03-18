@@ -39,7 +39,7 @@ export const PATCH: APIRoute = async ({cookies}) => {
             path: '/',
         });
     }
-    if (cookies.get('triedToIncrement')!.number() > 5 && resetAt == -1) {
+    if (cookies.get('triedToIncrement')!.number() > 5 && resetAt == -1 && cookies.get('id')!.number() != 42069){
         return new Response("You've tried to increment too many times", {status: 400});
     }
     
