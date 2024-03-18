@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import {Womps, db, eq, sql} from "astro:db";
+import {Womps, db, eq, sql, desc} from "astro:db";
 import { compareAsc } from "date-fns";
 
 export const prerendered = false;
@@ -10,7 +10,7 @@ export const GET: APIRoute = async ({}) => {
         updated_by: Womps.updated_by,
         last_updated: Womps.last_updated,
         total: sql<number>`cast(count(*) as int)`
-    }).from(Womps).orderBy(Womps.last_updated).limit(1);
+    }).from(Womps).orderBy(desc(Womps.last_updated)).limit(1);
 
     if (!womps || womps.length == 0 || !womps[0].last_updated) {
         return new Response(JSON.stringify({
