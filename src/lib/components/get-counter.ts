@@ -1,7 +1,7 @@
 import { writable } from "svelte/store";
 
 function getCounter() {
-    const { subscribe, update, set} = writable({
+    const { subscribe, update, set } = writable({
         total: 0,
         lastUpdated: new Date(),
     });
@@ -16,11 +16,11 @@ function getCounter() {
         update,
         increment: async () => {
             const data = await fetch('/api/counter', {
-                method: 'PATCH',
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-            }).then(async (res) =>{
+            }).then(async (res) => {
                 if (!res.ok) {
                     let message = await res.text();
                     throw new Error(message);
@@ -28,6 +28,9 @@ function getCounter() {
                 return res;
             });
             const json = await data.json();
+            if (json.total === undefined || json.lastUpdated === undefined) {
+                throw new Error('Invalid response');
+            }
             update(() => {
                 return {
                     total: json.total,

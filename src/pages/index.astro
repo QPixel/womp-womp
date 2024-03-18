@@ -1,28 +1,44 @@
 ---
-import '../styles/global.css'
-import {Card, CardContent, CardTitle, CardHeader} from '$lib/components/ui/card'
-import Counter from '$lib/components/counter.svelte'
-
+import "../styles/global.css";
+import {
+  Card,
+  CardContent,
+  CardTitle,
+  CardHeader,
+} from "$lib/components/ui/card";
+import Counter from "$lib/components/counter.svelte";
 ---
 
 <html lang="en" class="dark">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Womp Womp</title>
-	</head>
-	<body class="bg-background min-h-screen w-full">
-		<main class="min-h-screen flex justify-center items-center">
-			<Card>
-				<CardHeader>
-					<CardTitle class={"text-4xl"}>Riley's <br> Womp Womp Counter</CardTitle>
-				</CardHeader>
-				<CardContent>
-					<Counter client:load isAuthed={Astro.cookies.has('id')}/>
-				</CardContent>
-			</Card>
-		</main>
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Womp Womp</title>
+  </head>
+  <body class="bg-background min-h-screen w-full">
+    <main
+      class="min-h-screen flex md:justify-center items-center flex-col max-w-lg p-2 mx-auto"
+    >
+      <header class="text-left mt-16">
+        <h1 class="font-semibold text-3xl">Riley's Womp Womp Counter</h1>
+      </header>
+      <div class="h-full w-full space-y-5 mt-10">
+        <Card class="w-full">
+          <CardContent class="pt-6">
+            <Counter client:load isAuthed={Astro.cookies.has("id")} />
+          </CardContent>
+        </Card>
+        <Card class="w-full">
+          <CardHeader>
+            <CardTitle class={"text-4xl"}>Leaderboard</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p class="text-xl">Coming soon...</p>
+          </CardContent>
+        </Card>
+      </div>
+    </main>
+  </body>
 </html>

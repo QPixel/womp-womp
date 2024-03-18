@@ -1,34 +1,38 @@
 import type { APIRoute } from "astro";
-import {Womps, db, eq} from "astro:db";
+import {Womps, db, eq, sql} from "astro:db";
 import { compareAsc } from "date-fns";
 
 export const prerendered = false;
 
-export const GET: APIRoute = async ({}) => {
-    const womps = (await db.select().from(Womps))[0];
 
-    if (womps) {
+export const GET: APIRoute = async ({}) => {
+    let womps = await db.select({
+        updated_by: Womps.updated_by,
+        last_updated: Womps.last_updated,
+        total: sql<number>`cast(count(*) as int)`
+    }).from(Womps).orderBy(Womps.last_updated).limit(1);
+
+    if (!womps || womps.length == 0 || !womps[0].last_updated) {
         return new Response(JSON.stringify({
-            total: womps.total,
-            lastUpdated: womps.lastUpdated.toISOString()
-        }), {status: 200});
-    } else {
-        await db.insert(Womps).values({
-            lastUpdated: new Date(),
-            total: 0,
-            id: 1
-        });
-        return new Response(JSON.stringify({
-            total: 0,
-            lastUpdated: new Date().toISOString()
-        }));
+            lastUpdated: new Date().toISOString(),
+            updatedBy: 0,
+            total: 0
+        }), {status: 201});
     }
+
+    return new Response(JSON.stringify({
+        total: womps[0].total,
+        lastUpdated: womps[0].last_updated.toISOString(),
+        updatedBy: womps[0].updated_by
+    }), {status: 200});
 };
 
-export const PATCH: APIRoute = async ({cookies}) => {
+export const POST: APIRoute = async ({cookies}) => {
     if (!cookies.has('id') || !cookies.has('resetAt') || !cookies.has('triedToIncrement')){
         return new Response("You must have permission to change the counter!", {status: 401});
     }
+    if (Number.isNaN(cookies.get('id')!.number())) return new Response("Invalid user id", {status: 400});
+
     let resetAt = compareAsc(new Date(), cookies.get('resetAt')!.value);
     if (resetAt >= 0) {
         cookies.set('triedToIncrement', '0', {
@@ -47,19 +51,23 @@ export const PATCH: APIRoute = async ({cookies}) => {
         path: '/',
     });
 
-    const lastUpdated = new Date();
-    let data = await db.select({
-        old_total: Womps.total,
-    }).from(Womps).where(eq(Womps.id, 1));
+    // Figure out how to condense this into a single query
+    let data = await db.insert(Womps).values({
+        last_updated: new Date(),
+        updated_by: cookies.get('id')!.number(),
+    }).returning({
+        last_updated: Womps.last_updated,
+        updated_by: Womps.updated_by,
+    });
+    let total = (await db.select({total: sql<number>`cast(count(*) as int)`.as('total')}).from(Womps).limit(1)).at(0);
 
-    await db.update(Womps).set({
-        lastUpdated: lastUpdated,
-        total: data[0].old_total + 1,
-        updated_by: cookies.get('id')!.number()
-    }).where(eq(Womps.id, 1));
+    if (!data || !total) {
+        return new Response("Failed to update counter", {status: 500});
+    }
 
     return new Response(JSON.stringify({
-        total: data[0].old_total + 1,
-        lastUpdated: lastUpdated.toISOString()
+        lastUpdated: data[0].last_updated.toISOString(),
+        updatedBy: data[0].updated_by,
+        total: total.total
     }), {status: 201});
 }
