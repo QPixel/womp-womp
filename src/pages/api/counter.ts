@@ -30,25 +30,25 @@ export const GET: APIRoute = async ({ }) => {
         total: sql<number>`wompQuery.total`,
     }).from(wompQuery).innerJoin(Womps, eq(Womps.last_updated, wompQuery.max_date)).limit(1);
     if (!womps || womps.length == 0 || !womps[0].last_updated) {
-        const username = await kv.get<string>(`user:${0}`);
-        const resolved_username = username ? username : "Unknown";
         return new Response(
             JSON.stringify({
                 lastUpdated: new Date().toISOString(),
                 updatedBy: 0,
                 total: 0,
-                resolved_username,
+                resolved_username: "Unknown",
             }),
             { status: 201 }
         );
     }
+    const username = await kv.get<string>(`user:${womps[0].updated_by}`);
+    const resolved_username = username ? username : "Unknown";
 
     return new Response(
         JSON.stringify({
             total: womps[0].total,
             lastUpdated: womps[0].last_updated.toISOString(),
             updatedBy: womps[0].updated_by,
-            resolved_username: ''
+            resolved_username
         }),
         { status: 200 }
     );
