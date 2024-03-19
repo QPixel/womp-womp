@@ -25,7 +25,7 @@
       Riley has Womp Womp'd: <span class="text-red-500">{$counter_store.total}</span> times
     </h1>
     <p>
-      Last Updated: {format($counter_store.lastUpdated, "MM/dd 'at' hh:mm a")} by {$counter_store.username}
+      Last Updated: {format($counter_store.lastUpdated, "MM/dd 'at' hh:mm a")} by {$counter_store.resolved_username}
     </p>
     {#if didError}
       <p class="text-red-500">{error}</p>
