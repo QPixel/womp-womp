@@ -3,13 +3,12 @@ import { createClient } from "@vercel/kv";
 
 export const prerendered = false;
 
-const { KV_REST_API_URL, KV_REST_API_TOKEN } = import.meta.env;
+const { REDIS_REST_API_URL, REDIS_REST_API_TOKEN } = import.meta.env;
  
 const kv = createClient({
-  url: KV_REST_API_URL,
-  token: KV_REST_API_TOKEN,
+  url: REDIS_REST_API_URL,
+  token: REDIS_REST_API_TOKEN,
 });
-
 export const GET: APIRoute = async ({ cookies, request }) => {
     console.log("test")
     const params = new URL(request.url).searchParams;
