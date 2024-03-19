@@ -5,7 +5,7 @@
   import { leaderboard_store } from "./get-leaderboard";
 
   export let isAuthed: boolean;
-  export let id: number;
+  export let id: number | undefined;
   let didError = false;
   let error = "";
   export const increment = () => {
@@ -13,7 +13,7 @@
       didError = true;
       error = e.message;
     });
-    leaderboard_store.update_local(id);
+    leaderboard_store.update_local(id!);
   };
 </script>
 

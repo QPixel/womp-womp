@@ -28,7 +28,7 @@ import Leaderboard from "$lib/components/leaderboard.svelte";
       <div class="h-full w-full space-y-5 mt-10">
         <Card class="w-full">
           <CardContent class="pt-6">
-            <Counter client:load isAuthed={Astro.cookies.has("id")} id={Astro.cookies.get("id")!.number()} />
+            <Counter client:load isAuthed={Astro.cookies.has("id")} id={Astro.cookies.get("id")?.number()} />
           </CardContent>
         </Card>
         <Card class="w-full">
