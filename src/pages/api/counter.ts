@@ -11,11 +11,11 @@ export const prerendered = false;
 //     total: sql<number>`cast(count(*) as int)`.as("total"),
 // }).from(Womps).groupBy(Womps.id).as("wompCount");
 
-const { KV_REST_API_URL, KV_REST_API_TOKEN } = import.meta.env;
+const { REDIS_REST_API_URL, REDIS_REST_API_TOKEN } = import.meta.env;
  
 const kv = createClient({
-  url: KV_REST_API_URL,
-  token: KV_REST_API_TOKEN,
+  url: REDIS_REST_API_URL,
+  token: REDIS_REST_API_TOKEN,
 });
 
 export const GET: APIRoute = async ({ }) => {
