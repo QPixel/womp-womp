@@ -20,11 +20,13 @@
 {#await counter_store.init()}
   <p>Loading</p>
 {:then}
-  <div class="space-y-4">
-    <h1 class="text-3xl font-semibold w-full">
-      Riley has Womp Womp'd: <span class="text-red-500">{$counter_store.total}</span> times
+  <div class="space-y-4 flex flex-col justify-center">
+    <h1 class="text-3xl font-semibold w-full text-center">
+      Riley has said
+      <br class="md:hidden"/>Womp Womp
     </h1>
-    <p>
+    <h1 class="text-red-500 text-center text-3xl font-semibold rounded-lg border px-9 py-2 w-fit mx-auto">{$counter_store.total} times</h1>
+    <p class="text-center">
       Last Updated: {format($counter_store.lastUpdated, "MM/dd 'at' hh:mm a")} by {$counter_store.resolved_username}
     </p>
     {#if didError}

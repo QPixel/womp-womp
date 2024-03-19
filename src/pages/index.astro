@@ -23,9 +23,9 @@ import Leaderboard from "$lib/components/leaderboard.svelte";
       class="min-h-screen flex md:justify-center items-center flex-col max-w-lg p-2 mx-auto"
     >
       <header class="text-left mt-16">
-        <h1 class="font-semibold text-3xl">Riley's Womp Womp Counter</h1>
+        <h1 class="font-semibold text-3xl">The Womp Womp Counter</h1>
       </header>
-      <div class="h-full w-full space-y-5 mt-10">
+      <div class="h-full w-full space-y-5 mt-5">
         <Card class="w-full">
           <CardContent class="pt-6">
             <Counter client:load isAuthed={Astro.cookies.has("id")} id={Astro.cookies.get("id")?.number()} />
