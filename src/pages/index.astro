@@ -7,6 +7,7 @@ import {
   CardHeader,
 } from "$lib/components/ui/card";
 import Counter from "$lib/components/counter.svelte";
+import Leaderboard from "$lib/components/leaderboard.svelte";
 ---
 
 <html lang="en" class="dark">
@@ -27,7 +28,7 @@ import Counter from "$lib/components/counter.svelte";
       <div class="h-full w-full space-y-5 mt-10">
         <Card class="w-full">
           <CardContent class="pt-6">
-            <Counter client:load isAuthed={Astro.cookies.has("id")} />
+            <Counter client:load isAuthed={Astro.cookies.has("id")} id={Astro.cookies.get("id")?.number()} />
           </CardContent>
         </Card>
         <Card class="w-full">
@@ -35,7 +36,7 @@ import Counter from "$lib/components/counter.svelte";
             <CardTitle class={"text-4xl"}>Leaderboard</CardTitle>
           </CardHeader>
           <CardContent>
-            <p class="text-xl">Coming soon...</p>
+            <Leaderboard client:load />
           </CardContent>
         </Card>
       </div>

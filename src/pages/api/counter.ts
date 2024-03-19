@@ -117,7 +117,6 @@ export const POST: APIRoute = async ({ cookies }) => {
             .limit(1)
     ).at(0);
 
-    console.log(data, total);
 
     if (!data || !total) {
         return new Response("Failed to update counter", { status: 500 });
