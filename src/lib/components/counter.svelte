@@ -2,9 +2,10 @@
   import { counter_store } from "./get-counter";
   import { format } from "date-fns";
   import { Button } from "$lib/components/ui/button";
+  import { leaderboard_store } from "./get-leaderboard";
 
   export let isAuthed: boolean;
-
+  export let id: number;
   let didError = false;
   let error = "";
   export const increment = () => {
@@ -12,6 +13,7 @@
       didError = true;
       error = e.message;
     });
+    leaderboard_store.update_local(id);
   };
 </script>
 

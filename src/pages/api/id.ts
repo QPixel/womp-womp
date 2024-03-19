@@ -10,7 +10,6 @@ const kv = createClient({
   token: REDIS_REST_API_TOKEN,
 });
 export const GET: APIRoute = async ({ cookies, request }) => {
-    console.log("test")
     const params = new URL(request.url).searchParams;
     if (params.has("id")) {
         const username = await kv.get<string>(`user:${params.get("id")}`);
