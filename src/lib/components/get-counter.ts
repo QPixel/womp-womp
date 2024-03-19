@@ -5,7 +5,7 @@ function getCounter() {
         total: 0,
         lastUpdated: new Date(),
         updatedBy: 0,
-        username: '',
+        resolved_username: '',
     });
 
     return {
@@ -13,10 +13,8 @@ function getCounter() {
         init: async () => {
             const data = await fetch('/api/counter');
             const json = await data.json();
-            const username = await (await fetch(`/api/id?id=${json.updatedBy}`)).text();
             set({
                 ...json,
-                username,
             });
         },
         update,
@@ -42,7 +40,7 @@ function getCounter() {
                     total: json.total,
                     lastUpdated: new Date(json.lastUpdated),
                     updatedBy: json.updatedBy,
-                    username: v.username,
+                    resolved_username: v.resolved_username,
                 }
             });
         }
