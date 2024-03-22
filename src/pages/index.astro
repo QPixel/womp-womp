@@ -8,6 +8,7 @@ import {
 } from "$lib/components/ui/card";
 import Counter from "$lib/components/counter.svelte";
 import Leaderboard from "$lib/components/leaderboard.svelte";
+import  SpeedInsights  from "@vercel/speed-insights/astro"
 ---
 
 <html lang="en" class="dark">
@@ -41,5 +42,6 @@ import Leaderboard from "$lib/components/leaderboard.svelte";
         </Card>
       </div>
     </main>
+    <SpeedInsights />
   </body>
 </html>

@@ -11,5 +11,5 @@ export default defineConfig({
   integrations: [db(), tailwind({
     applyBaseStyles: false
   }), svelte()],
-  adapter: vercel()
+  adapter: vercel({webAnalytics: { enabled: true }})
 });
