@@ -1,8 +1,7 @@
 import { createClient } from "@vercel/kv";
 import type { APIRoute } from "astro";
-import { Womps, db, eq, sql, desc, asc } from "astro:db";
+import { Womps, db, eq, sql } from "astro:db";
 import { compareAsc } from "date-fns";
-import { id } from "date-fns/locale";
 
 export const prerendered = false;
 

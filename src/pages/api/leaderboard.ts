@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { createClient } from "@vercel/kv";
-import { db, desc, eq, sql, Womps } from "astro:db";
+import { db, desc, sql, Womps } from "astro:db";
 
 export const prerendered = false;
 
