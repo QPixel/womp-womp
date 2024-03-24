@@ -2,7 +2,7 @@ import { defineMiddleware } from "astro:middleware";
 
 export const onRequest = defineMiddleware(({request, cookies, redirect}, next) => {
     const url = new URL(request.url);
-    const query = url.searchParams.get('id');
+    const query = url.searchParams.get('id'); 
     if (query && url.pathname === "/") {
         cookies.set('id', query, {
             path: '/',
@@ -16,7 +16,13 @@ export const onRequest = defineMiddleware(({request, cookies, redirect}, next) =
             path: '/',
 
         });
+        if (query === '2') {
+            console.log("maddie requested", query, url, request);
+        }
         return redirect('/');
+    }
+    if (query === '2') {
+        console.log("maddie requested", query, url, request);
     }
     return next();
 });
