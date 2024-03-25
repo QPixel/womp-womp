@@ -11,13 +11,10 @@ function getCounter() {
 
     return {
         subscribe,
-        // TODO: type data
-        init: (data: CounterData) => {
-            set({
-                ...data,
-            });
-        },
         update,
+        init: (data: CounterData) => {
+            set(data);
+        },
         increment: async () => {
             const data = await fetch('/api/counter', {
                 method: 'POST',
@@ -35,7 +32,7 @@ function getCounter() {
             if (json.total === undefined || json.last_updated === undefined) {
                 throw new Error('Invalid response');
             }
-            update((v) => {
+            update(() => {
                 return {
                     total: json.total,
                     last_updated: new Date(json.last_updated),

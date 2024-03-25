@@ -4,6 +4,7 @@
   import { Button } from "$lib/components/ui/button";
   import { leaderboard_store } from "./get-leaderboard";
   import type { CounterData } from "src/pages/api/counter";
+  import { onMount } from "svelte";
 
   export let isAuthed: boolean;
   export let id: number | undefined;
@@ -20,7 +21,9 @@
       return "";
     });
   };
-  counter_store.init(serverData);
+  onMount(() => {
+    counter_store.init(serverData);
+  });
 </script>
 
 
