@@ -19,7 +19,7 @@ async function resolveUsernameFromId(id: number) {
     return username ? username : "Unknown";
 }
 
-export const GET: APIRoute = async () => {
+export async function getCounterData() {
     let wompQuery = db.select({
         max_date: sql<Date>`max(last_updated)`.as("max_date"),
         total: sql<number>`count(*)`.as("total"),
@@ -30,6 +30,13 @@ export const GET: APIRoute = async () => {
         last_updated: Womps.last_updated,
         total: sql<number>`wompQuery.total`,
     }).from(wompQuery).innerJoin(Womps, eq(Womps.last_updated, wompQuery.max_date)).limit(1);
+
+    return womps;
+}
+
+export const GET: APIRoute = async () => {
+    let womps = await getCounterData();
+
     if (!womps || womps.length == 0 || !womps[0].last_updated) {
         return new Response(
             JSON.stringify({

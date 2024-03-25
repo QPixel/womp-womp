@@ -8,7 +8,9 @@ import {
 } from "$lib/components/ui/card";
 import Counter from "$lib/components/counter.svelte";
 import Leaderboard from "$lib/components/leaderboard.svelte";
-import SpeedInsights  from "@vercel/speed-insights/astro";
+import { getCounterData } from "./api/counter";
+import { getLeaderboard } from "./api/leaderboard";
+import SpeedInsights from "@vercel/speed-insights/astro";
 
 const { id } = Astro.params;
 
@@ -17,8 +19,9 @@ if (typeof id !== "undefined") {
     return new Response("Invalid ID", { status: 400 });
   }
 }
-const counterData = await (await fetch(Astro.url.origin + '/api/counter')).json();
-const leaderboardData = await (await fetch(Astro.url.origin + '/api/leaderboard')).json();
+
+const counterData = await getCounterData();
+const leaderboardData = await getLeaderboard();
 ---
 
 <html lang="en" class="dark">
@@ -39,7 +42,12 @@ const leaderboardData = await (await fetch(Astro.url.origin + '/api/leaderboard'
       <div class="h-full w-full space-y-5 mt-5">
         <Card class="w-full">
           <CardContent class="pt-6">
-            <Counter client:load isAuthed={typeof id !=="undefined"} id={parseInt(id!)} serverData={counterData} />
+            <Counter
+              client:load
+              isAuthed={typeof id !== "undefined"}
+              id={parseInt(id!)}
+              serverData={counterData}
+            />
           </CardContent>
         </Card>
         <Card class="w-full">

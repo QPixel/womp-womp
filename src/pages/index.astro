@@ -8,10 +8,12 @@ import {
 } from "$lib/components/ui/card";
 import Counter from "$lib/components/counter.svelte";
 import Leaderboard from "$lib/components/leaderboard.svelte";
-import SpeedInsights  from "@vercel/speed-insights/astro"
+import SpeedInsights  from "@vercel/speed-insights/astro";
+import { getCounterData } from "./api/counter";
+import { getLeaderboard } from "./api/leaderboard";
 
-const counterData = await (await fetch(Astro.url.origin + '/api/counter')).json();
-const leaderboardData = await (await fetch(Astro.url.origin + '/api/leaderboard')).json();
+const counterData = await getCounterData();
+const leaderboardData = await getLeaderboard();
 ---
 
 <html lang="en" class="dark">

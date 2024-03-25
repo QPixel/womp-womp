@@ -10,11 +10,8 @@ const kv = createClient({
     url: REDIS_REST_API_URL,
     token: REDIS_REST_API_TOKEN,
 });
-export const GET: APIRoute<{
-    total: number;
-    updatedBy: number;
-    resolved_username: string;
-}> = async ({ }) => {
+
+export async function getLeaderboard() {
     let wompTotals = await db.select({
         updated_by: Womps.updated_by,
         total: sql<number>`count(*)`.as("total"),
@@ -27,5 +24,15 @@ export const GET: APIRoute<{
             resolved_username: username ? username : "Unknown",
         };
     }));
+    return wompData;
+}
+
+export const GET: APIRoute<{
+    total: number;
+    updatedBy: number;
+    resolved_username: string;
+}> = async () => {
+    let wompData = await getLeaderboard();
+
     return new Response(JSON.stringify(wompData), { status: 200, headers: { "Content-Type": "application/json" } });
 };
