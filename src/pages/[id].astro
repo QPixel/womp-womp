@@ -55,10 +55,3 @@ const leaderboardData = await (await fetch(Astro.url.origin + '/api/leaderboard'
     <SpeedInsights />
   </body>
 </html>
-
-<script> 
-  let username = Astro.cookies.get("resolved_username");
-  if (typeof username !== "undefined") {
-    localStorage.setItem("username", username.value);
-  }
-</script>
