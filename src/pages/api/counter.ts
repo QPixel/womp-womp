@@ -5,10 +5,6 @@ import { compareAsc } from "date-fns";
 
 export const prerendered = false;
 
-// const wompCount = db.select({
-//     id: Womps.id,
-//     total: sql<number>`cast(count(*) as int)`.as("total"),
-// }).from(Womps).groupBy(Womps.id).as("wompCount");
 
 const { REDIS_REST_API_URL, REDIS_REST_API_TOKEN } = import.meta.env;
  
@@ -17,7 +13,13 @@ const kv = createClient({
   token: REDIS_REST_API_TOKEN,
 });
 
-export const GET: APIRoute = async ({ }) => {
+async function resolveUsernameFromId(id: number) {
+    // resolve the async promise inline
+    const username = await kv.get<string>(`user:${id}`)
+    return username ? username : "Unknown";
+}
+
+export async function getCounterData() {
     let wompQuery = db.select({
         max_date: sql<Date>`max(last_updated)`.as("max_date"),
         total: sql<number>`count(*)`.as("total"),
@@ -28,27 +30,31 @@ export const GET: APIRoute = async ({ }) => {
         last_updated: Womps.last_updated,
         total: sql<number>`wompQuery.total`,
     }).from(wompQuery).innerJoin(Womps, eq(Womps.last_updated, wompQuery.max_date)).limit(1);
+
     if (!womps || womps.length == 0 || !womps[0].last_updated) {
-        return new Response(
-            JSON.stringify({
-                lastUpdated: new Date().toISOString(),
-                updatedBy: 0,
-                total: 0,
-                resolved_username: "Unknown",
-            }),
-            { status: 201 }
-        );
+        return {
+            total: 0,
+            last_updated: new Date(),
+            updated_by: 0,
+            resolved_username: "Unknown",
+        };
     }
-    const username = await kv.get<string>(`user:${womps[0].updated_by}`);
-    const resolved_username = username ? username : "Unknown";
+    const resolved_username = await resolveUsernameFromId(womps[0].updated_by);
+    return {
+        total: womps[0].total,
+        last_updated: womps[0].last_updated,
+        updated_by: womps[0].updated_by,
+        resolved_username,
+    };
+}
+
+export type CounterData = typeof getCounterData extends () => Promise<infer T> ? T : never;
+
+export const GET: APIRoute<CounterData> = async () => {
+    let womps = await getCounterData();
 
     return new Response(
-        JSON.stringify({
-            total: womps[0].total,
-            lastUpdated: womps[0].last_updated.toISOString(),
-            updatedBy: womps[0].updated_by,
-            resolved_username
-        }),
+        JSON.stringify(womps),
         { status: 200 }
     );
 };
@@ -125,11 +131,16 @@ export const POST: APIRoute = async ({ cookies }) => {
         return new Response("Failed to update counter", { status: 500 });
     }
 
+    const resolved_username = await resolveUsernameFromId(data[0].updated_by);
+    cookies.set("resolved_username", resolved_username, {
+        path: "/"
+    })
     return new Response(
         JSON.stringify({
-            lastUpdated: data[0].last_updated.toISOString(),
-            updatedBy: data[0].updated_by,
+            last_updated: data[0].last_updated.toISOString(),
+            updated_by: data[0].updated_by,
             total: total.total,
+            resolved_username,
         }),
         { status: 201 }
     );
