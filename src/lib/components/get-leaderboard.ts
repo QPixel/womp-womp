@@ -6,7 +6,7 @@ function getLeaderboard() {
 
     return {
         subscribe,
-        init: (data: any) => {
+        init: (data: LeaderboardData) => {
             set(data);
         },
         update_local: (id: number, resolved_username = "") => {

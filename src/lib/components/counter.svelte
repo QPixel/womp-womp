@@ -21,9 +21,7 @@
       return "";
     });
   };
-  onMount(() => {
-    counter_store.init(serverData);
-  });
+  counter_store.init(serverData);
 </script>
 
 

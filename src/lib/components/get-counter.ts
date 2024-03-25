@@ -6,7 +6,7 @@ function getCounter() {
         total: 0,
         last_updated: new Date(),
         updated_by: 0,
-        resolved_username: '',
+        resolved_username: "Unknown",
     });
 
     return {
