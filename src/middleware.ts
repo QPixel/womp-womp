@@ -20,7 +20,7 @@ export const onRequest = defineMiddleware(({request, cookies, redirect}, next) =
         return next();
     }
 
-    if ((query && url.pathname === "/" )) {
+    if (query && url.pathname === "/") {
         cookies.set('id', query, {
             path: '/',
             expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 365),

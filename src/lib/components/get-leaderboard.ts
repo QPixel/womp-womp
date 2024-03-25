@@ -9,16 +9,28 @@ function getLeaderboard() {
 
     return {
         subscribe,
-        init: async () => {
-            const data = await fetch('/api/leaderboard');
-            if (!data.ok) {
-                throw new Error('Failed to fetch leaderboard');
-            }
-            const json = await data.json();
-            set(json);
+        init: (data: any) => {
+            set(data);
         },
-        update_local: (id: number) => {
+        update_local: (id: number, resolved_username = "") => {
             update((v) => {
+                if (v.length === 0) {
+                    return [{
+                        updatedBy: id,
+                        total: 1,
+                        resolved_username: resolved_username !== "" ? resolved_username : "Unknown",
+                    }];
+                }
+
+                if (!v.some((entry) => entry.updatedBy === id)){
+                    v.push({
+                        updatedBy: id,
+                        total: 1,
+                        resolved_username: resolved_username !== "" ? resolved_username : "Unknown",
+                    })
+                    return v.sort((a, b) => b.total - a.total);
+                }
+
                 return v.map((entry) => {
                     if (entry.updatedBy === id) {
                         return {
@@ -27,7 +39,7 @@ function getLeaderboard() {
                         };
                     }
                     return entry;
-                });
+                }).sort((a, b) => b.total - a.total);
             });
         }
     }

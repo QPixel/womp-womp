@@ -8,7 +8,10 @@ import {
 } from "$lib/components/ui/card";
 import Counter from "$lib/components/counter.svelte";
 import Leaderboard from "$lib/components/leaderboard.svelte";
-import  SpeedInsights  from "@vercel/speed-insights/astro"
+import SpeedInsights  from "@vercel/speed-insights/astro"
+
+const counterData = await (await fetch(Astro.url.origin + '/api/counter')).json();
+const leaderboardData = await (await fetch(Astro.url.origin + '/api/leaderboard')).json();
 ---
 
 <html lang="en" class="dark">
@@ -29,7 +32,7 @@ import  SpeedInsights  from "@vercel/speed-insights/astro"
       <div class="h-full w-full space-y-5 mt-5">
         <Card class="w-full">
           <CardContent class="pt-6">
-            <Counter client:load isAuthed={Astro.cookies.has("id")} id={Astro.cookies.get("id")?.number()} />
+            <Counter client:load isAuthed={Astro.cookies.has("id")} id={Astro.cookies.get("id")?.number()} serverData={counterData}/>
           </CardContent>
         </Card>
         <Card class="w-full">
@@ -37,7 +40,7 @@ import  SpeedInsights  from "@vercel/speed-insights/astro"
             <CardTitle class={"text-4xl"}>Leaderboard</CardTitle>
           </CardHeader>
           <CardContent>
-            <Leaderboard client:load />
+            <Leaderboard client:load serverData={leaderboardData} />
           </CardContent>
         </Card>
       </div>
@@ -45,3 +48,10 @@ import  SpeedInsights  from "@vercel/speed-insights/astro"
     <SpeedInsights />
   </body>
 </html>
+
+<script> 
+  let username = Astro.cookies.get("resolved_username");
+  if (typeof username !== "undefined") {
+    localStorage.setItem("username", username.value);
+  }
+</script>

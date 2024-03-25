@@ -5,10 +5,6 @@ import { compareAsc } from "date-fns";
 
 export const prerendered = false;
 
-// const wompCount = db.select({
-//     id: Womps.id,
-//     total: sql<number>`cast(count(*) as int)`.as("total"),
-// }).from(Womps).groupBy(Womps.id).as("wompCount");
 
 const { REDIS_REST_API_URL, REDIS_REST_API_TOKEN } = import.meta.env;
  
@@ -17,7 +13,13 @@ const kv = createClient({
   token: REDIS_REST_API_TOKEN,
 });
 
-export const GET: APIRoute = async ({ }) => {
+async function resolveUsernameFromId(id: number) {
+    // resolve the async promise inline
+    const username = await kv.get<string>(`user:${id}`)
+    return username ? username : "Unknown";
+}
+
+export const GET: APIRoute = async () => {
     let wompQuery = db.select({
         max_date: sql<Date>`max(last_updated)`.as("max_date"),
         total: sql<number>`count(*)`.as("total"),
@@ -39,8 +41,8 @@ export const GET: APIRoute = async ({ }) => {
             { status: 201 }
         );
     }
-    const username = await kv.get<string>(`user:${womps[0].updated_by}`);
-    const resolved_username = username ? username : "Unknown";
+    
+    const resolved_username = await resolveUsernameFromId(womps[0].updated_by);
 
     return new Response(
         JSON.stringify({
@@ -125,11 +127,16 @@ export const POST: APIRoute = async ({ cookies }) => {
         return new Response("Failed to update counter", { status: 500 });
     }
 
+    const resolved_username = await resolveUsernameFromId(data[0].updated_by);
+    cookies.set("resolved_username", resolved_username, {
+        path: "/"
+    })
     return new Response(
         JSON.stringify({
             lastUpdated: data[0].last_updated.toISOString(),
             updatedBy: data[0].updated_by,
             total: total.total,
+            resolved_username,
         }),
         { status: 201 }
     );

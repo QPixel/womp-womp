@@ -10,11 +10,10 @@ function getCounter() {
 
     return {
         subscribe,
-        init: async () => {
-            const data = await fetch('/api/counter');
-            const json = await data.json();
+        // TODO: type data
+        init: (data: any) => {
             set({
-                ...json,
+                ...data,
             });
         },
         update,
@@ -40,9 +39,10 @@ function getCounter() {
                     total: json.total,
                     lastUpdated: new Date(json.lastUpdated),
                     updatedBy: json.updatedBy,
-                    resolved_username: v.resolved_username,
+                    resolved_username: json.resolved_username,
                 }
             });
+            return json.resolved_username;
         }
     }
 }

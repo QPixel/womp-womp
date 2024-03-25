@@ -17,6 +17,8 @@ if (typeof id !== "undefined") {
     return new Response("Invalid ID", { status: 400 });
   }
 }
+const counterData = await (await fetch(Astro.url.origin + '/api/counter')).json();
+const leaderboardData = await (await fetch(Astro.url.origin + '/api/leaderboard')).json();
 ---
 
 <html lang="en" class="dark">
@@ -37,7 +39,7 @@ if (typeof id !== "undefined") {
       <div class="h-full w-full space-y-5 mt-5">
         <Card class="w-full">
           <CardContent class="pt-6">
-            <Counter client:load isAuthed={typeof id !=="undefined"} id={parseInt(id!)} />
+            <Counter client:load isAuthed={typeof id !=="undefined"} id={parseInt(id!)} serverData={counterData} />
           </CardContent>
         </Card>
         <Card class="w-full">
@@ -45,7 +47,7 @@ if (typeof id !== "undefined") {
             <CardTitle class={"text-4xl"}>Leaderboard</CardTitle>
           </CardHeader>
           <CardContent>
-            <Leaderboard client:load />
+            <Leaderboard client:load serverData={leaderboardData} />
           </CardContent>
         </Card>
       </div>
@@ -53,3 +55,10 @@ if (typeof id !== "undefined") {
     <SpeedInsights />
   </body>
 </html>
+
+<script> 
+  let username = Astro.cookies.get("resolved_username");
+  if (typeof username !== "undefined") {
+    localStorage.setItem("username", username.value);
+  }
+</script>
