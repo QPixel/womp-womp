@@ -1,11 +1,8 @@
 import { writable } from "svelte/store";
+import type { LeaderboardData } from "src/pages/api/leaderboard";
 
 function getLeaderboard() {
-    const { subscribe, set, update } = writable<{
-        updatedBy: number;
-        total: number;
-        resolved_username: string;
-    }[]>([]);
+    const { subscribe, set, update } = writable<LeaderboardData>([]);
 
     return {
         subscribe,
@@ -16,15 +13,15 @@ function getLeaderboard() {
             update((v) => {
                 if (v.length === 0) {
                     return [{
-                        updatedBy: id,
+                        updated_by: id,
                         total: 1,
                         resolved_username: resolved_username !== "" ? resolved_username : "Unknown",
                     }];
                 }
 
-                if (!v.some((entry) => entry.updatedBy === id)){
+                if (!v.some((entry) => entry.updated_by === id)){
                     v.push({
-                        updatedBy: id,
+                        updated_by: id,
                         total: 1,
                         resolved_username: resolved_username !== "" ? resolved_username : "Unknown",
                     })
@@ -32,7 +29,7 @@ function getLeaderboard() {
                 }
 
                 return v.map((entry) => {
-                    if (entry.updatedBy === id) {
+                    if (entry.updated_by === id) {
                         return {
                             ...entry,
                             total: entry.total + 1,

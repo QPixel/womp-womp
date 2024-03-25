@@ -20,18 +20,16 @@ export async function getLeaderboard() {
         const username = await kv.get<string>(`user:${womp.updated_by}`);
         return {
             total: womp.total,
-            updatedBy: womp.updated_by,
+            updated_by: womp.updated_by,
             resolved_username: username ? username : "Unknown",
         };
     }));
     return wompData;
 }
 
-export const GET: APIRoute<{
-    total: number;
-    updatedBy: number;
-    resolved_username: string;
-}> = async () => {
+export type LeaderboardData = typeof getLeaderboard extends () => Promise<infer T> ? T : never;
+
+export const GET: APIRoute<LeaderboardData> = async () => {
     let wompData = await getLeaderboard();
 
     return new Response(JSON.stringify(wompData), { status: 200, headers: { "Content-Type": "application/json" } });

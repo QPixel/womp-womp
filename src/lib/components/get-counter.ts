@@ -1,17 +1,18 @@
 import { writable } from "svelte/store";
+import type { CounterData } from "src/pages/api/counter";
 
 function getCounter() {
-    const { subscribe, update, set } = writable({
+    const { subscribe, update, set } = writable<CounterData>({
         total: 0,
-        lastUpdated: new Date(),
-        updatedBy: 0,
+        last_updated: new Date(),
+        updated_by: 0,
         resolved_username: '',
     });
 
     return {
         subscribe,
         // TODO: type data
-        init: (data: any) => {
+        init: (data: CounterData) => {
             set({
                 ...data,
             });
@@ -30,15 +31,15 @@ function getCounter() {
                 }
                 return res;
             });
-            const json = await data.json();
-            if (json.total === undefined || json.lastUpdated === undefined) {
+            const json = await data.json() as CounterData;
+            if (json.total === undefined || json.last_updated === undefined) {
                 throw new Error('Invalid response');
             }
             update((v) => {
                 return {
                     total: json.total,
-                    lastUpdated: new Date(json.lastUpdated),
-                    updatedBy: json.updatedBy,
+                    last_updated: new Date(json.last_updated),
+                    updated_by: json.updated_by,
                     resolved_username: json.resolved_username,
                 }
             });

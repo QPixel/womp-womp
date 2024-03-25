@@ -5,18 +5,20 @@ export const onRequest = defineMiddleware(({request, cookies, redirect}, next) =
     const query = url.searchParams.get('id'); 
     let idRegex = url.pathname.match(/\/([\d]+)/g);
     if (idRegex) {
-        cookies.set('id', idRegex[0].replace('/', ''), {
-            path: '/',
-            expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 365),
-        });
-        cookies.set('triedToIncrement', '0', {
-            path: '/',
-        
-        });
-        cookies.set('resetAt', new Date(new Date().getTime() + 1000 * 60 * 60 * 24).toISOString(), {
-            path: '/',
-
-        });
+        if (!cookies.has('id')) {
+            cookies.set('id', idRegex[0].replace('/', ''), {
+                path: '/',
+                expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 365),
+            });
+            cookies.set('triedToIncrement', '0', {
+                path: '/',
+            
+            });
+            cookies.set('resetAt', new Date(new Date().getTime() + 1000 * 60 * 60 * 24).toISOString(), {
+                path: '/',
+    
+            });
+        }
         return next();
     }
 
