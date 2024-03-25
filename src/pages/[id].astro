@@ -1,0 +1,55 @@
+---
+import "../styles/global.css";
+import {
+  Card,
+  CardContent,
+  CardTitle,
+  CardHeader,
+} from "$lib/components/ui/card";
+import Counter from "$lib/components/counter.svelte";
+import Leaderboard from "$lib/components/leaderboard.svelte";
+import SpeedInsights  from "@vercel/speed-insights/astro";
+
+const { id } = Astro.params;
+
+if (typeof id !== "undefined") {
+  if (isNaN(parseInt(id))) {
+    return new Response("Invalid ID", { status: 400 });
+  }
+}
+---
+
+<html lang="en" class="dark">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Womp Womp</title>
+  </head>
+  <body class="bg-background min-h-screen w-full">
+    <main
+      class="min-h-screen flex md:justify-center items-center flex-col max-w-lg p-2 mx-auto"
+    >
+      <header class="text-left mt-16">
+        <h1 class="font-semibold text-3xl">The Womp Womp Counter</h1>
+      </header>
+      <div class="h-full w-full space-y-5 mt-5">
+        <Card class="w-full">
+          <CardContent class="pt-6">
+            <Counter client:load isAuthed={typeof id !=="undefined"} id={parseInt(id!)} />
+          </CardContent>
+        </Card>
+        <Card class="w-full">
+          <CardHeader>
+            <CardTitle class={"text-4xl"}>Leaderboard</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Leaderboard client:load />
+          </CardContent>
+        </Card>
+      </div>
+    </main>
+    <SpeedInsights />
+  </body>
+</html>
