@@ -87,6 +87,7 @@ export const POST: APIRoute = async ({ cookies }) => {
             new Date(new Date().getTime() + 1000 * 60 * 60 * 24).toISOString(),
             {
                 path: "/",
+                expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 365),
             }
         );
     }
@@ -105,6 +106,7 @@ export const POST: APIRoute = async ({ cookies }) => {
         `${(cookies.get("triedToIncrement")?.number() || 0) + 1}`,
         {
             path: "/",
+            expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 365),
         }
     );
 
