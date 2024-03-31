@@ -11,6 +11,11 @@ function getLeaderboard() {
         },
         update_local: (id: number, resolved_username = "", current_quarter = "") => {
             update((v) => {
+                
+                if (!v[current_quarter]) {
+                    v[current_quarter] = [];
+                }
+
                 let newData = v[current_quarter];
                 if (!newData.some((entry) => entry.updated_by === id)) {
                     newData.push({
