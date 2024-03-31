@@ -8,12 +8,14 @@ import {
 } from "$lib/components/ui/card";
 import Counter from "$lib/components/counter.svelte";
 import Leaderboard from "$lib/components/leaderboard.svelte";
-import SpeedInsights  from "@vercel/speed-insights/astro";
+import SpeedInsights from "@vercel/speed-insights/astro";
 import { getCounterData } from "./api/counter";
-import { getLeaderboard } from "./api/leaderboard";
+import { getLeaderboard } from "./api/leaderboard/all";
+import { getQuarters } from "./api/leaderboard/quarter";
 
 const counterData = await getCounterData();
 const leaderboardData = await getLeaderboard();
+const leaderboardQuarters = await getQuarters();
 ---
 
 <html lang="en" class="dark">
@@ -34,15 +36,25 @@ const leaderboardData = await getLeaderboard();
       <div class="h-full w-full space-y-5 mt-5">
         <Card class="w-full">
           <CardContent class="pt-6">
-            <Counter client:load isAuthed={Astro.cookies.has("id")} id={Astro.cookies.get("id")?.number()} serverData={counterData}/>
+            <Counter
+              client:load
+              isAuthed={Astro.cookies.has("id")}
+              id={Astro.cookies.get("id")?.number()}
+              serverData={counterData}
+              currentQuarter={leaderboardQuarters[0]}
+            />
           </CardContent>
         </Card>
-        <Card class="w-full">
+        <Card class="w-full min-h-[410px]">
           <CardHeader>
             <CardTitle class={"text-4xl"}>Leaderboard</CardTitle>
           </CardHeader>
           <CardContent>
-            <Leaderboard client:load serverData={leaderboardData} />
+            <Leaderboard
+              client:load
+              leaderboardData={leaderboardData}
+              leaderboardQuarters={leaderboardQuarters}
+            />
           </CardContent>
         </Card>
       </div>

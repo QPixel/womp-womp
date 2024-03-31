@@ -100,6 +100,12 @@ export const POST: APIRoute = async ({ cookies }) => {
             status: 400,
         });
     }
+    
+    const currentQuarter = await kv.get<string>("current_quarter");
+
+    if (!currentQuarter) {
+        return new Response("Failed to update counter", { status: 500 });
+    }
 
     cookies.set(
         "triedToIncrement",
@@ -110,12 +116,15 @@ export const POST: APIRoute = async ({ cookies }) => {
         }
     );
 
+    
+
     // Figure out how to condense this into a single query
     let data = await db
         .insert(Womps)
         .values({
             last_updated: new Date(),
             updated_by: cookies.get("id")!.number(),
+            quarter_id: currentQuarter,
         })
         .returning({
             last_updated: Womps.last_updated,
@@ -143,6 +152,7 @@ export const POST: APIRoute = async ({ cookies }) => {
             updated_by: data[0].updated_by,
             total: total.total,
             resolved_username,
+            current_quarter: currentQuarter,
         }),
         { status: 201 }
     );

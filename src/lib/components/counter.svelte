@@ -9,12 +9,13 @@
   export let isAuthed: boolean;
   export let id: number | undefined;
   export let serverData: CounterData;
+  export let currentQuarter: string;
 
   let didError = false;
   let error = "";
   export const increment = async () => {
     await counter_store.increment().then((resolved_username) => {
-      leaderboard_store.update_local(id!, resolved_username);
+      leaderboard_store.update_local(id!, resolved_username, currentQuarter);
     }).catch((e) => {
       didError = true;
       error = e.message;
