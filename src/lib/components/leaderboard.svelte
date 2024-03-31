@@ -1,13 +1,9 @@
 <script lang="ts">
   import { leaderboard_store } from "./get-leaderboard";
   import * as Tabs from "$lib/components/ui/tabs";
-  import { writable } from "svelte/store";
-
 
   export let leaderboardData: any;
   export let leaderboardQuarters: string[];
-
-
   leaderboard_store.init(leaderboardData);
 
 </script>
