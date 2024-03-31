@@ -4,7 +4,7 @@ export const onRequest = defineMiddleware(({request, cookies, redirect}, next) =
     const url = new URL(request.url);
     const query = url.searchParams.get('id'); 
     let idRegex = url.pathname.match(/\/([\d]+)/g);
-    if (idRegex ) {
+    if (idRegex) {
         if (!cookies.has('id') || !cookies.has('triedToIncrement') || !cookies.has('resetAt')) {
             cookies.set('id', idRegex[0].replace('/', ''), {
                 path: '/',
@@ -13,6 +13,7 @@ export const onRequest = defineMiddleware(({request, cookies, redirect}, next) =
             cookies.set('triedToIncrement', '0', {
                 path: '/',
                 expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 365),
+            
             });
             cookies.set('resetAt', new Date(new Date().getTime() + 1000 * 60 * 60 * 24).toISOString(), {
                 path: '/',

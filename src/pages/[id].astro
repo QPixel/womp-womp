@@ -9,19 +9,23 @@ import {
 import Counter from "$lib/components/counter.svelte";
 import Leaderboard from "$lib/components/leaderboard.svelte";
 import { getCounterData } from "./api/counter";
-import { getLeaderboard } from "./api/leaderboard";
+import { getLeaderboard } from "./api/leaderboard/all";
 import SpeedInsights from "@vercel/speed-insights/astro";
+import { getQuarters } from "./api/leaderboard/quarter";
 
 const { id } = Astro.params;
 
 if (typeof id !== "undefined") {
   if (isNaN(parseInt(id))) {
-    return new Response("Invalid ID", { status: 400 });
+    return new Response("Invalid ID", { status: 307, headers: {
+      "Location": "/"
+    } });
   }
 }
 
 const counterData = await getCounterData();
 const leaderboardData = await getLeaderboard();
+const leaderboardQuarters = await getQuarters();
 ---
 
 <html lang="en" class="dark">
@@ -47,15 +51,16 @@ const leaderboardData = await getLeaderboard();
               isAuthed={typeof id !== "undefined"}
               id={parseInt(id!)}
               serverData={counterData}
+              currentQuarter={leaderboardQuarters[0]}
             />
           </CardContent>
         </Card>
-        <Card class="w-full">
+        <Card class="w-full min-h-[410px]">
           <CardHeader>
             <CardTitle class={"text-4xl"}>Leaderboard</CardTitle>
           </CardHeader>
           <CardContent>
-            <Leaderboard client:load serverData={leaderboardData} />
+            <Leaderboard client:load leaderboardData={leaderboardData} leaderboardQuarters={leaderboardQuarters} />
           </CardContent>
         </Card>
       </div>
@@ -63,3 +68,4 @@ const leaderboardData = await getLeaderboard();
     <SpeedInsights />
   </body>
 </html>
+./api/leaderboard/leaderboard./api/leaderboard/all
