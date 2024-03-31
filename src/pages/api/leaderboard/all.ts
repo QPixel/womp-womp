@@ -17,7 +17,6 @@ export async function getLeaderboard() {
         total: sql<number>`count(*)`.as("total"),
         quarter: Womps.quarter_id,
     }).from(Womps).groupBy(Womps.quarter_id, Womps.updated_by).orderBy(desc(sql`total`)).limit(10);
-    console.log(wompTotals);
 
     let wompData: Record<string, Array<Omit<typeof wompTotals[0], "quarter"> & {resolved_username: string}>> = {}
     for (let womp of wompTotals) {

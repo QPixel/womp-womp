@@ -12,7 +12,6 @@ function getLeaderboard() {
         update_local: (id: number, resolved_username = "", current_quarter = "") => {
             update((v) => {
                 let newData = v[current_quarter];
-                 console.log(newData);
                 if (!newData.some((entry) => entry.updated_by === id)) {
                     newData.push({
                         updated_by: id,
@@ -23,11 +22,8 @@ function getLeaderboard() {
                 }
 
                 if (newData.some((entry) => entry.updated_by === id)) {
-                    console.log("updating");
                     newData = newData.map((entry) => {
-                        console.log(entry);
                         if (entry.updated_by === id) {
-                            console.log("updating", entry, id);
                             return {
                                 ...entry,
                                 total: entry.total + 1,
@@ -35,10 +31,8 @@ function getLeaderboard() {
                         }
                         return entry;
                     });
-                    console.log(newData);
                     v[current_quarter] = newData.sort((a, b) => b.total - a.total);
                 }
-                console.log(v);
                 return v;
             })
         }

@@ -7,6 +7,5 @@ export default async function seed() {
 	data.map((entry: any) => {
 		entry.last_updated = new Date(entry.last_updated);
 	})
-	console.log(data);
 	await db.insert(Womps).values(data);
 }
