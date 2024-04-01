@@ -1,7 +1,8 @@
 import { createClient } from "@vercel/kv";
 import type { APIRoute } from "astro";
-import { Womps, db, eq, sql } from "astro:db";
+import { Womps, and, db, eq, sql } from "astro:db";
 import { compareAsc } from "date-fns";
+import { get } from "svelte/store";
 
 export const prerendered = false;
 
@@ -19,18 +20,28 @@ async function resolveUsernameFromId(id: number) {
     return username ? username : "Unknown";
 }
 
-export async function getCounterData() {
+async function getCounterWithQuarter(currentQuarter: string) {
     let wompQuery = db.select({
         max_date: sql<Date>`max(last_updated)`.as("max_date"),
         total: sql<number>`count(*)`.as("total"),
-    }).from(Womps).as("wompQuery");
+    }).from(Womps).where(eq(Womps.quarter_id, currentQuarter)).as("wompQuery");
 
     let womps = await db.select({
         updated_by: Womps.updated_by,
         last_updated: Womps.last_updated,
         total: sql<number>`wompQuery.total`,
+        quarter: Womps.quarter_id,
     }).from(wompQuery).innerJoin(Womps, eq(Womps.last_updated, wompQuery.max_date)).limit(1);
+    return womps;
+}
 
+export async function getCounterData() {
+    let currentQuarter = await kv.get<string>("current_quarter");
+    if (!currentQuarter) {
+        currentQuarter = "24-Q2";
+    }
+    let womps = await getCounterWithQuarter(currentQuarter);
+    
     if (!womps || womps.length == 0 || !womps[0].last_updated) {
         return {
             total: 0,
@@ -130,13 +141,10 @@ export const POST: APIRoute = async ({ cookies }) => {
             last_updated: Womps.last_updated,
             updated_by: Womps.updated_by,
         });
-    let total = (
-        await db
-            .select({ total: sql<number>`cast(count(*) as int)`.as("total") })
-            .from(Womps)
-            .limit(1)
-    ).at(0);
-
+    
+    let total = await db.select({
+        total: sql<number>`count(*)`.as("total"),
+    }).from(Womps).where(eq(Womps.quarter_id, currentQuarter));
 
     if (!data || !total) {
         return new Response("Failed to update counter", { status: 500 });
@@ -150,7 +158,7 @@ export const POST: APIRoute = async ({ cookies }) => {
         JSON.stringify({
             last_updated: data[0].last_updated.toISOString(),
             updated_by: data[0].updated_by,
-            total: total.total,
+            total: total[0].total,
             resolved_username,
             current_quarter: currentQuarter,
         }),

@@ -1,8 +1,9 @@
 <script lang="ts">
   import { leaderboard_store } from "./get-leaderboard";
   import * as Tabs from "$lib/components/ui/tabs";
+  import type { LeaderboardData } from "src/pages/api/leaderboard/all";
 
-  export let leaderboardData: any;
+  export let leaderboardData: LeaderboardData;
   export let leaderboardQuarters: string[];
   leaderboard_store.init(leaderboardData);
 
@@ -19,8 +20,9 @@
     {#each leaderboardQuarters as quarter}
       <Tabs.Content value={quarter}>
         <div class="space-y-4">
+          <p class="text-md">Quarter Total: {$leaderboard_store[quarter].total}</p>
           <ol class="divide-solid divide-y border-2 rounded-lg p-2">
-            {#each $leaderboard_store[quarter] as player, i}
+            {#each $leaderboard_store[quarter].data as player, i}
               <li class="text-xl p-2">
                 {i + 1}. {player.resolved_username} - {player.total}
               </li>
