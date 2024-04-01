@@ -8,6 +8,7 @@ import MainPage from "$lib/pages/main-page.astro";
 
 const { id } = Astro.params;
 
+
 if (typeof id !== "undefined") {
   if (isNaN(parseInt(id))) {
     return new Response("Invalid ID", { status: 307, headers: {
