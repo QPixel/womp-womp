@@ -8,7 +8,7 @@
 
   export let isAuthed: boolean;
   export let id: number | undefined;
-  export let serverData: CounterData;
+  export let counterData: CounterData;
   export let currentQuarter: string;
 
   let didError = false;
@@ -22,7 +22,7 @@
       return "";
     });
   };
-  counter_store.init(serverData);
+  counter_store.init(counterData);
 </script>
 
 

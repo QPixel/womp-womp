@@ -1,17 +1,10 @@
 ---
 import "../styles/global.css";
-import {
-  Card,
-  CardContent,
-  CardTitle,
-  CardHeader,
-} from "$lib/components/ui/card";
-import Counter from "$lib/components/counter.svelte";
-import Leaderboard from "$lib/components/leaderboard.svelte";
 import { getCounterData } from "./api/counter";
 import { getLeaderboard } from "./api/leaderboard/all";
 import SpeedInsights from "@vercel/speed-insights/astro";
 import { getQuarters } from "./api/leaderboard/quarter";
+import MainPage from "$lib/pages/main-page.astro";
 
 const { id } = Astro.params;
 
@@ -37,34 +30,7 @@ const leaderboardQuarters = await getQuarters();
     <title>Womp Womp</title>
   </head>
   <body class="bg-background min-h-screen w-full">
-    <main
-      class="min-h-screen flex md:justify-center items-center flex-col max-w-lg p-2 mx-auto"
-    >
-      <header class="text-left mt-16">
-        <h1 class="font-semibold text-3xl">The Womp Womp Counter</h1>
-      </header>
-      <div class="h-full w-full space-y-5 mt-5">
-        <Card class="w-full">
-          <CardContent class="pt-6">
-            <Counter
-              client:load
-              isAuthed={typeof id !== "undefined"}
-              id={parseInt(id!)}
-              serverData={counterData}
-              currentQuarter={leaderboardQuarters[0]}
-            />
-          </CardContent>
-        </Card>
-        <Card class="w-full min-h-[450px]">
-          <CardHeader>
-            <CardTitle class={"text-4xl"}>Leaderboard</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Leaderboard client:load leaderboardData={leaderboardData} leaderboardQuarters={leaderboardQuarters} />
-          </CardContent>
-        </Card>
-      </div>
-    </main>
+    <MainPage userId={id} counterData={counterData} leaderboardData={leaderboardData} leaderboardQuarters={leaderboardQuarters} />
     <SpeedInsights />
   </body>
 </html>
