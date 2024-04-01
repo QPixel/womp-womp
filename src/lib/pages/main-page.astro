@@ -1,0 +1,46 @@
+---
+import Counter from "$lib/components/counter.svelte";
+import Leaderboard from "$lib/components/leaderboard.svelte";
+import { Card, CardContent, CardHeader, CardTitle } from "$lib/components/ui/card";
+import type { CounterData } from "src/pages/api/counter";
+import type { LeaderboardData } from "src/pages/api/leaderboard/all";
+
+
+interface Props {
+    userId: string | undefined;
+    counterData: CounterData;
+    leaderboardData: LeaderboardData;
+    leaderboardQuarters: string[];
+}
+
+const { userId: id, counterData, leaderboardData, leaderboardQuarters } = Astro.props;
+
+---
+<main
+class="min-h-screen flex md:justify-center items-center flex-col max-w-lg p-2 mx-auto"
+>
+<header class="text-left mt-16">
+  <h1 class="font-semibold text-3xl">The Womp Womp Counter</h1>
+</header>
+<div class="h-full w-full space-y-5 mt-5">
+  <Card class="w-full">
+    <CardContent class="pt-6">
+      <Counter
+        client:load
+        isAuthed={typeof id !== "undefined"}
+        id={parseInt(id!)}
+        counterData={counterData}
+        currentQuarter={leaderboardQuarters[0]}
+      />
+    </CardContent>
+  </Card>
+  <Card class="w-full min-h-[450px]">
+    <CardHeader>
+      <CardTitle class={"text-4xl"}>Leaderboard</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <Leaderboard client:load leaderboardData={leaderboardData} leaderboardQuarters={leaderboardQuarters} />
+    </CardContent>
+  </Card>
+</div>
+</main>
