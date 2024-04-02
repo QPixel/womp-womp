@@ -2,8 +2,9 @@ import { defineConfig } from 'astro/config';
 import db from "@astrojs/db";
 import tailwind from "@astrojs/tailwind";
 import svelte from "@astrojs/svelte";
-
 import vercel from "@astrojs/vercel/serverless";
+
+import cloudflare from "@astrojs/cloudflare";
 
 // https://astro.build/config
 export default defineConfig({
@@ -11,5 +12,5 @@ export default defineConfig({
   integrations: [db(), tailwind({
     applyBaseStyles: false
   }), svelte()],
-  adapter: vercel({webAnalytics: { enabled: true }})
+  adapter: cloudflare()
 });
