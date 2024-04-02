@@ -31,7 +31,7 @@
     Riley has said
     <br class="md:hidden"/>Womp Womp
   </h1>
-  <h1 class="text-red-500 text-center text-3xl font-semibold rounded-lg border px-9 py-2 w-fit mx-auto">{$counter_store.total} times</h1>
+  <h1 class="text-red-500 text-center text-3xl font-semibold rounded-lg border px-9 py-2 w-fit mx-auto data-[funny-number=true]:rainbow-text" data-funny-number={$counter_store.total == 69}>{$counter_store.total} times</h1>
   <p class="text-center">
     Last Updated: {format($counter_store.last_updated, "MM/dd 'at' hh:mm a")} by {$counter_store.resolved_username}
   </p>

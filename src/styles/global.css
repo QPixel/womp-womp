@@ -99,6 +99,29 @@
     text-decoration: underline;
   }
 }
+@layer utilities {
+  .rainbow-text {
+    background-image: repeating-linear-gradient(to left, violet, indigo, blue, green, yellow, orange, red);    
+    -webkit-background-clip: text;
+    color: transparent;
+    animation: rainbowtext 10s linear infinite;
+    background-size: 800% 800%;
+  }
+}
+  
+@keyframes rainbowtext {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 25%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+
 
 @keyframes coolTextThing {
   0% {
