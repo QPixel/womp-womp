@@ -8,6 +8,7 @@ compatibility_flags = [ "nodejs_compat" ]
 binding = "WOMP_DB"
 database_name = "WOMP_DB"
 database_id = "b32bf941-f600-4779-ac2c-04cdbc7afa43"
+preview_database_id = "local_test_db"
 
 # Bind a KV Namespace. Use KV as persistent storage for small key-value pairs.
 # Docs: https://developers.cloudflare.com/pages/functions/bindings/#kv-namespaces

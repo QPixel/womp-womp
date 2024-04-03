@@ -1,8 +1,6 @@
 import type { APIContext, APIRoute } from "astro";
-// import { db, desc, eq, sql, Womps } from "astro:db";
 import { getDB } from "src/db/drizzle";
 import { Womps } from "src/db/schema";
-import type { KVNamespace } from "@cloudflare/workers-types";
 import type { ENV } from "src/env";
 import { desc, sql } from "drizzle-orm";
 

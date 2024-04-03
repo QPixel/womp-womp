@@ -1,6 +1,4 @@
 import type { APIRoute } from "astro";
-import type { KVNamespace } from "@cloudflare/workers-types";
-// import { db, desc, eq, sql, Womps } from "astro:db";
 import { getDB } from "src/db/drizzle";
 import type { ENV } from "src/env";
 import { Womps } from "src/db/schema";

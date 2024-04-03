@@ -1,5 +1,4 @@
 import type { APIRoute } from "astro";
-// import { Womps, db, eq, sql } from "astro:db";
 import { compareAsc } from "date-fns";
 import type { KVNamespace } from "@cloudflare/workers-types";
 import { getDB } from "src/db/drizzle";
@@ -8,8 +7,6 @@ import { Womps } from "src/db/schema";
 import { eq, sql } from "drizzle-orm";
 
 export const prerendered = false;
-
-
 
 async function resolveUsernameFromId(id: number, kv: KVNamespace) {
     // resolve the async promise inline
