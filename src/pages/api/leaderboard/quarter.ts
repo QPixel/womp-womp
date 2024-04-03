@@ -1,13 +1,13 @@
 import type { APIRoute } from "astro";
-import { getDB } from "src/db/drizzle";
-import type { ENV } from "src/env";
-import { Womps } from "src/db/schema";
 import { desc, eq, sql } from "drizzle-orm";
+import { getDB } from "src/db/drizzle";
+import { Womps } from "src/db/schema";
+import type { ENV } from "src/env";
 
 
 
 export async function getLeaderboardByQuarter(quarter: string, env: ENV) {
-    const { WOMP_KV: kv, WOMP_DB } = env;
+    const { WOMP_KV: kv } = env;
     const db = getDB(env);
     let wompTotals = await db.select({
         updated_by: Womps.updated_by,
@@ -25,7 +25,7 @@ export async function getLeaderboardByQuarter(quarter: string, env: ENV) {
 }
 
 export async function getQuarters(env: ENV) {
-    const { WOMP_KV: kv, WOMP_DB } = env;
+    const { WOMP_KV: kv } = env;
     const db = getDB(env);
     let quartersData = await db.select({
         quarter_id: Womps.quarter_id,

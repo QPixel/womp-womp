@@ -1,8 +1,8 @@
-import type { APIContext, APIRoute } from "astro";
+import type { APIRoute } from "astro";
+import { desc, sql } from "drizzle-orm";
 import { getDB } from "src/db/drizzle";
 import { Womps } from "src/db/schema";
 import type { ENV } from "src/env";
-import { desc, sql } from "drizzle-orm";
 
 // import { getDB } from "src/db/drizzle";
 
@@ -10,7 +10,7 @@ export const prerendered = false;
 
 
 export async function getLeaderboard(env: ENV) {
-    const {WOMP_KV: kv, WOMP_DB} = env;
+    const kv = env.WOMP_KV;
     const db = getDB(env);
     let wompTotals = await db.select({
         updated_by: Womps.updated_by,

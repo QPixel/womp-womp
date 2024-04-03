@@ -31,7 +31,6 @@ async function getCounterWithQuarter(currentQuarter: string, env: ENV) {
 }
 
 export async function getCounterData(env: ENV) {
-    const db = getDB(env);
     const kv = env.WOMP_KV;
     let currentQuarter = await kv.get<string>("current_quarter");
     if (!currentQuarter) {
@@ -59,7 +58,6 @@ export async function getCounterData(env: ENV) {
 export type CounterData = typeof getCounterData extends (env: ENV) => Promise<infer T> ? T : never;
 
 export const GET: APIRoute<CounterData> = async ({locals}) => {
-    const kv = locals.runtime.env.WOMP_KV;
     const womps = await getCounterData(locals.runtime.env);
 
     return new Response(
