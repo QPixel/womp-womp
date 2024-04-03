@@ -11,7 +11,6 @@ export type ENV = {
   //   WOMP_DB: D1Database;
 };
 
-
 // Depending on your adapter mode
 // use `AdvancedRuntime<ENV>` for advance runtime mode
 // use `DirectoryRuntime<ENV>` for directory runtime mode
@@ -20,6 +19,5 @@ declare global {
   type Runtime = import("@astrojs/cloudflare").Runtime<ENV>;
   namespace App {
     interface Locals extends Runtime {}
-
   }
 }

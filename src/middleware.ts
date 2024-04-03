@@ -1,42 +1,53 @@
 import { defineMiddleware } from "astro:middleware";
 
-export const onRequest = defineMiddleware(({request, cookies, redirect}, next) => {
+export const onRequest = defineMiddleware(
+  ({ request, cookies, redirect }, next) => {
     const url = new URL(request.url);
-    const query = url.searchParams.get('id'); 
-    let idRegex = url.pathname.match(/\/([\d]+)/g);
+    const query = url.searchParams.get("id");
+    const idRegex = url.pathname.match(/\/([\d]+)/g);
     if (idRegex) {
-        if (!cookies.has('id') || !cookies.has('triedToIncrement') || !cookies.has('resetAt')) {
-            cookies.set('id', idRegex[0].replace('/', ''), {
-                path: '/',
-                expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 365),
-            });
-            cookies.set('triedToIncrement', '0', {
-                path: '/',
-                expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 365),
-            
-            });
-            cookies.set('resetAt', new Date(new Date().getTime() + 1000 * 60 * 60 * 24).toISOString(), {
-                path: '/',
-                expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 365),
-            });
-        }
-        return next();
+      if (
+        !cookies.has("id") ||
+        !cookies.has("triedToIncrement") ||
+        !cookies.has("resetAt")
+      ) {
+        cookies.set("id", idRegex[0].replace("/", ""), {
+          path: "/",
+          expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 365),
+        });
+        cookies.set("triedToIncrement", "0", {
+          path: "/",
+          expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 365),
+        });
+        cookies.set(
+          "resetAt",
+          new Date(new Date().getTime() + 1000 * 60 * 60 * 24).toISOString(),
+          {
+            path: "/",
+            expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 365),
+          },
+        );
+      }
+      return next();
     }
 
     if (query && url.pathname === "/") {
-        cookies.set('id', query, {
-            path: '/',
-            expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 365),
-        });
-        cookies.set('triedToIncrement', '0', {
-            path: '/',
-        
-        });
-        cookies.set('resetAt', new Date(new Date().getTime() + 1000 * 60 * 60 * 24).toISOString(), {
-            path: '/',
-
-        });
-        return redirect('/');
+      cookies.set("id", query, {
+        path: "/",
+        expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 365),
+      });
+      cookies.set("triedToIncrement", "0", {
+        path: "/",
+      });
+      cookies.set(
+        "resetAt",
+        new Date(new Date().getTime() + 1000 * 60 * 60 * 24).toISOString(),
+        {
+          path: "/",
+        },
+      );
+      return redirect("/");
     }
     return next();
-});
+  },
+);
