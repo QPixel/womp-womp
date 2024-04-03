@@ -1,5 +1,4 @@
 import { defineConfig } from 'astro/config';
-import db from "@astrojs/db";
 import tailwind from "@astrojs/tailwind";
 import svelte from "@astrojs/svelte";
 
@@ -8,8 +7,18 @@ import cloudflare from "@astrojs/cloudflare";
 // https://astro.build/config
 export default defineConfig({
   output: "server",
-  integrations: [db(), tailwind({
+  integrations: [tailwind({
     applyBaseStyles: false
   }), svelte()],
-  adapter: cloudflare()
+  adapter: cloudflare({
+    platformProxy: {
+      enabled: true,
+      configPath: "./wrangler.toml",
+    }
+  }),
+  vite: {
+    ssr: {
+      external: ["node:url"]
+    }
+  }
 });

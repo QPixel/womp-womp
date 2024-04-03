@@ -1,13 +1,19 @@
 import type { APIContext, APIRoute } from "astro";
-import { db, desc, eq, sql, Womps } from "astro:db";
+// import { db, desc, eq, sql, Womps } from "astro:db";
+import { getDB } from "src/db/drizzle";
+import { Womps } from "src/db/schema";
 import type { KVNamespace } from "@cloudflare/workers-types";
+import type { ENV } from "src/env";
+import { desc, sql } from "drizzle-orm";
 
 // import { getDB } from "src/db/drizzle";
 
 export const prerendered = false;
 
 
-export async function getLeaderboard(kv: KVNamespace) {
+export async function getLeaderboard(env: ENV) {
+    const {WOMP_KV: kv, WOMP_DB} = env;
+    const db = getDB(env);
     let wompTotals = await db.select({
         updated_by: Womps.updated_by,
         total: sql<number>`count(*)`.as("total"),
@@ -41,11 +47,11 @@ export async function getLeaderboard(kv: KVNamespace) {
 }
 
 
-export type LeaderboardData = typeof getLeaderboard extends (kv: KVNamespace) => Promise<infer T> ? T : never;
+export type LeaderboardData = typeof getLeaderboard extends (env: ENV) => Promise<infer T> ? T : never;
 
 export const GET: APIRoute<LeaderboardData> = async ({locals}) => {
-    const kv = locals.runtime.env.WOMP_KV;
-    let wompData = await getLeaderboard(kv);
+    const { env } = locals.runtime;
+    let wompData = await getLeaderboard(env);
 
     return new Response(JSON.stringify(wompData), { status: 200, headers: { "Content-Type": "application/json" } });
 };

@@ -1,7 +1,11 @@
 import type { APIRoute } from "astro";
-import { Womps, db, eq, sql } from "astro:db";
+// import { Womps, db, eq, sql } from "astro:db";
 import { compareAsc } from "date-fns";
 import type { KVNamespace } from "@cloudflare/workers-types";
+import { getDB } from "src/db/drizzle";
+import type { ENV } from "src/env";
+import { Womps } from "src/db/schema";
+import { eq, sql } from "drizzle-orm";
 
 export const prerendered = false;
 
@@ -13,7 +17,8 @@ async function resolveUsernameFromId(id: number, kv: KVNamespace) {
     return username ? username : "Unknown";
 }
 
-async function getCounterWithQuarter(currentQuarter: string) {
+async function getCounterWithQuarter(currentQuarter: string, env: ENV) {
+    const db = getDB(env);
     let wompQuery = db.select({
         max_date: sql<Date>`max(last_updated)`.as("max_date"),
         total: sql<number>`count(*)`.as("total"),
@@ -28,12 +33,14 @@ async function getCounterWithQuarter(currentQuarter: string) {
     return womps;
 }
 
-export async function getCounterData(kv: KVNamespace) {
+export async function getCounterData(env: ENV) {
+    const db = getDB(env);
+    const kv = env.WOMP_KV;
     let currentQuarter = await kv.get<string>("current_quarter");
     if (!currentQuarter) {
         currentQuarter = "24-Q2";
     }
-    let womps = await getCounterWithQuarter(currentQuarter);
+    let womps = await getCounterWithQuarter(currentQuarter, env);
     
     if (!womps || womps.length == 0 || !womps[0].last_updated) {
         return {
@@ -52,11 +59,11 @@ export async function getCounterData(kv: KVNamespace) {
     };
 }
 
-export type CounterData = typeof getCounterData extends (kv: KVNamespace) => Promise<infer T> ? T : never;
+export type CounterData = typeof getCounterData extends (env: ENV) => Promise<infer T> ? T : never;
 
 export const GET: APIRoute<CounterData> = async ({locals}) => {
     const kv = locals.runtime.env.WOMP_KV;
-    const womps = await getCounterData(kv);
+    const womps = await getCounterData(locals.runtime.env);
 
     return new Response(
         JSON.stringify(womps),
@@ -76,7 +83,8 @@ export const POST: APIRoute = async ({ cookies, locals }) => {
     }
     if (Number.isNaN(cookies.get("id")!.number()))
         return new Response("Invalid user id", { status: 400 });
-    const kv = locals.runtime.env.WOMP_KV;
+    const { env } = locals.runtime;
+    const kv = env.WOMP_KV;
     const id = cookies.get("id")!.number();
     const username = await kv.get<string>(`user:${id}`);
 
@@ -124,7 +132,7 @@ export const POST: APIRoute = async ({ cookies, locals }) => {
     );
 
     
-
+    const db = getDB(env);
     // Figure out how to condense this into a single query
     let data = await db
         .insert(Womps)

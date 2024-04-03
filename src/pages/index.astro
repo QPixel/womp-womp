@@ -6,10 +6,10 @@ import { getLeaderboard } from "./api/leaderboard/all";
 import { getQuarters } from "./api/leaderboard/quarter";
 
 
-const kv = Astro.locals.runtime.env.WOMP_KV;
-const counterData = await getCounterData(kv);
-const leaderboardData = await getLeaderboard(kv);
-const leaderboardQuarters = await getQuarters(kv);
+const { env } = Astro.locals.runtime;
+const counterData = await getCounterData(env);
+const leaderboardData = await getLeaderboard(env);
+const leaderboardQuarters = await getQuarters(env);
 ---
 
 <html lang="en" class="dark">
