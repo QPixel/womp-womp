@@ -1,13 +1,15 @@
 {
   "name": "womp-womp",
   "type": "module",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro check && astro build",
-    "preview": "astro preview",
-    "astro": "astro"
+    "preview": "wrangler pages dev ./dist",
+    "astro": "astro",
+    "wrangler": "wrangler",
+    "seed:db": "wrangler d1 local-test-db --local --file=./seed.sql"
   },
   "dependencies": {
     "@astrojs/check": "^0.5.10",
@@ -28,6 +30,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240402.0",
-    "drizzle-kit": "^0.20.14"
+    "drizzle-kit": "^0.20.14",
+    "wrangler": "^3.44.0"
   }
 }
