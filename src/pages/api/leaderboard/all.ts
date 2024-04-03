@@ -1,19 +1,13 @@
-import type { APIRoute } from "astro";
-import { createClient } from "@vercel/kv";
+import type { APIContext, APIRoute } from "astro";
 import { db, desc, eq, sql, Womps } from "astro:db";
+import type { KVNamespace } from "@cloudflare/workers-types";
+
+// import { getDB } from "src/db/drizzle";
 
 export const prerendered = false;
 
-const { REDIS_REST_API_URL, REDIS_REST_API_TOKEN } = import.meta.env;
 
-const kv = createClient({
-    url: REDIS_REST_API_URL,
-    token: REDIS_REST_API_TOKEN,
-});
-
-
-
-export async function getLeaderboard() {
+export async function getLeaderboard(kv: KVNamespace) {
     let wompTotals = await db.select({
         updated_by: Womps.updated_by,
         total: sql<number>`count(*)`.as("total"),
@@ -47,10 +41,12 @@ export async function getLeaderboard() {
 }
 
 
-export type LeaderboardData = typeof getLeaderboard extends () => Promise<infer T> ? T : never;
+export type LeaderboardData = typeof getLeaderboard extends (kv: KVNamespace) => Promise<infer T> ? T : never;
 
-export const GET: APIRoute<LeaderboardData> = async () => {
-    let wompData = await getLeaderboard();
+export const GET: APIRoute<LeaderboardData> = async ({locals}) => {
+    const kv = locals.runtime.env.WOMP_KV;
+    let wompData = await getLeaderboard(kv);
 
     return new Response(JSON.stringify(wompData), { status: 200, headers: { "Content-Type": "application/json" } });
 };
+

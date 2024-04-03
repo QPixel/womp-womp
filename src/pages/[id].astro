@@ -2,7 +2,7 @@
 import "../styles/global.css";
 import { getCounterData } from "./api/counter";
 import { getLeaderboard } from "./api/leaderboard/all";
-import SpeedInsights from "@vercel/speed-insights/astro";
+
 import { getQuarters } from "./api/leaderboard/quarter";
 import MainPage from "$lib/pages/main-page.astro";
 
@@ -16,10 +16,10 @@ if (typeof id !== "undefined") {
     } });
   }
 }
-
-const counterData = await getCounterData();
-const leaderboardData = await getLeaderboard();
-const leaderboardQuarters = await getQuarters();
+const kv = Astro.locals.runtime.env.WOMP_KV;
+const counterData = await getCounterData(kv);
+const leaderboardData = await getLeaderboard(kv);
+const leaderboardQuarters = await getQuarters(kv);
 ---
 
 <html lang="en" class="dark">
@@ -32,6 +32,5 @@ const leaderboardQuarters = await getQuarters();
   </head>
   <body class="bg-background min-h-screen w-full">
     <MainPage userId={id} counterData={counterData} leaderboardData={leaderboardData} leaderboardQuarters={leaderboardQuarters} />
-    <SpeedInsights />
   </body>
 </html>

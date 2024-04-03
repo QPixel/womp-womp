@@ -2,7 +2,6 @@ import { defineConfig } from 'astro/config';
 import db from "@astrojs/db";
 import tailwind from "@astrojs/tailwind";
 import svelte from "@astrojs/svelte";
-import vercel from "@astrojs/vercel/serverless";
 
 import cloudflare from "@astrojs/cloudflare";
 

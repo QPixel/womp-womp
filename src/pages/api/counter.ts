@@ -1,20 +1,13 @@
-import { createClient } from "@vercel/kv";
 import type { APIRoute } from "astro";
-import { Womps, and, db, eq, sql } from "astro:db";
+import { Womps, db, eq, sql } from "astro:db";
 import { compareAsc } from "date-fns";
-import { get } from "svelte/store";
+import type { KVNamespace } from "@cloudflare/workers-types";
 
 export const prerendered = false;
 
 
-const { REDIS_REST_API_URL, REDIS_REST_API_TOKEN } = import.meta.env;
- 
-const kv = createClient({
-  url: REDIS_REST_API_URL,
-  token: REDIS_REST_API_TOKEN,
-});
 
-async function resolveUsernameFromId(id: number) {
+async function resolveUsernameFromId(id: number, kv: KVNamespace) {
     // resolve the async promise inline
     const username = await kv.get<string>(`user:${id}`)
     return username ? username : "Unknown";
@@ -35,7 +28,7 @@ async function getCounterWithQuarter(currentQuarter: string) {
     return womps;
 }
 
-export async function getCounterData() {
+export async function getCounterData(kv: KVNamespace) {
     let currentQuarter = await kv.get<string>("current_quarter");
     if (!currentQuarter) {
         currentQuarter = "24-Q2";
@@ -50,7 +43,7 @@ export async function getCounterData() {
             resolved_username: "Unknown",
         };
     }
-    const resolved_username = await resolveUsernameFromId(womps[0].updated_by);
+    const resolved_username = await resolveUsernameFromId(womps[0].updated_by, kv);
     return {
         total: womps[0].total,
         last_updated: womps[0].last_updated,
@@ -59,10 +52,11 @@ export async function getCounterData() {
     };
 }
 
-export type CounterData = typeof getCounterData extends () => Promise<infer T> ? T : never;
+export type CounterData = typeof getCounterData extends (kv: KVNamespace) => Promise<infer T> ? T : never;
 
-export const GET: APIRoute<CounterData> = async () => {
-    let womps = await getCounterData();
+export const GET: APIRoute<CounterData> = async ({locals}) => {
+    const kv = locals.runtime.env.WOMP_KV;
+    const womps = await getCounterData(kv);
 
     return new Response(
         JSON.stringify(womps),
@@ -70,7 +64,7 @@ export const GET: APIRoute<CounterData> = async () => {
     );
 };
 
-export const POST: APIRoute = async ({ cookies }) => {
+export const POST: APIRoute = async ({ cookies, locals }) => {
     if (
         !cookies.has("id") ||
         !cookies.has("resetAt") ||
@@ -82,10 +76,12 @@ export const POST: APIRoute = async ({ cookies }) => {
     }
     if (Number.isNaN(cookies.get("id")!.number()))
         return new Response("Invalid user id", { status: 400 });
-
+    const kv = locals.runtime.env.WOMP_KV;
     const id = cookies.get("id")!.number();
-    if (await kv.exists(`user:${id}`) !== 1 && id != 42069) {
-        return new Response("User not found", { status: 404 });
+    const username = await kv.get<string>(`user:${id}`);
+
+    if (!username) {
+        return new Response("Invalid user id", { status: 400 });
     }
 
     let resetAt = compareAsc(new Date(), cookies.get("resetAt")!.value);
@@ -150,7 +146,7 @@ export const POST: APIRoute = async ({ cookies }) => {
         return new Response("Failed to update counter", { status: 500 });
     }
 
-    const resolved_username = await resolveUsernameFromId(data[0].updated_by);
+    const resolved_username = await resolveUsernameFromId(data[0].updated_by, kv);
     cookies.set("resolved_username", resolved_username, {
         path: "/"
     })

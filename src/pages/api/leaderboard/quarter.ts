@@ -1,15 +1,10 @@
-import { createClient } from "@vercel/kv";
 import type { APIRoute } from "astro";
+import type { KVNamespace } from "@cloudflare/workers-types";
 import { db, desc, eq, sql, Womps } from "astro:db";
 
-const { REDIS_REST_API_URL, REDIS_REST_API_TOKEN } = import.meta.env;
 
-const kv = createClient({
-    url: REDIS_REST_API_URL,
-    token: REDIS_REST_API_TOKEN,
-});
 
-export async function getLeaderboardByQuarter(quarter: string) {
+export async function getLeaderboardByQuarter(quarter: string, kv: KVNamespace) {
     let wompTotals = await db.select({
         updated_by: Womps.updated_by,
         total: sql<number>`count(*)`.as("total"),
@@ -25,7 +20,7 @@ export async function getLeaderboardByQuarter(quarter: string) {
     return wompData;
 }
 
-export async function getQuarters() {
+export async function getQuarters(kv: KVNamespace) {
     let quartersData = await db.select({
         quarter_id: Womps.quarter_id,
     }).from(Womps);
@@ -38,15 +33,16 @@ export async function getQuarters() {
     return Array.from(quarters)
 }
 
-export type LeaderboardDataByQuarter = typeof getLeaderboardByQuarter extends () => Promise<infer T> ? T : never;
+export type LeaderboardDataByQuarter = typeof getLeaderboardByQuarter extends (kv: KVNamespace) => Promise<infer T> ? T : never;
 
-export const GET: APIRoute<LeaderboardDataByQuarter> = async ({request: {url}}) => {
+export const GET: APIRoute<LeaderboardDataByQuarter> = async ({request: {url}, locals}) => {
     let quarter = new URL(url).searchParams.get("quarter");
     if (typeof quarter !== "string") {
         return new Response("Invalid quarter", { status: 400 });
     }
+    const kv = locals.runtime.env.WOMP_KV;
 
-    let wompData = await getLeaderboardByQuarter(quarter);
+    let wompData = await getLeaderboardByQuarter(quarter, kv);
 
 
 
