@@ -95,6 +95,10 @@ export const POST: APIRoute = async ({ cookies, locals }) => {
   const kv = env.WOMP_KV;
   const id = cookies.get("id")!.number();
   const username = await kv.get<string>(`user:${id}`);
+  const incrementCount = await kv.get<string>("incrementCount").then((val) => {
+    if (!val) return 5;
+    return parseInt(val);
+  });
 
   if (!username) {
     return new Response("Invalid user id", { status: 400 });
@@ -115,7 +119,7 @@ export const POST: APIRoute = async ({ cookies, locals }) => {
     );
   }
   if (
-    cookies.get("triedToIncrement")!.number() > 5 &&
+    cookies.get("triedToIncrement")!.number() > incrementCount &&
     resetAt == -1 &&
     cookies.get("id")!.number() != 42069
   ) {
