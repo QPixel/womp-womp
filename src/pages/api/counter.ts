@@ -105,6 +105,7 @@ export const POST: APIRoute = async ({ cookies, locals }) => {
   }
 
   const resetAt = compareAsc(new Date(), cookies.get("resetAt")!.value);
+
   if (resetAt >= 0) {
     cookies.set("triedToIncrement", "0", {
       path: "/",
@@ -118,6 +119,7 @@ export const POST: APIRoute = async ({ cookies, locals }) => {
       },
     );
   }
+
   if (
     cookies.get("triedToIncrement")!.number() > incrementCount &&
     resetAt == -1 &&

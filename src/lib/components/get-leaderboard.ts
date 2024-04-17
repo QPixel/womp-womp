@@ -41,7 +41,18 @@ function getLeaderboard() {
             }
             return entry;
           });
-          v[current_quarter].data = newData.sort((a, b) => b.total - a.total);
+          v[current_quarter].data = newData.sort((a, b) => {
+            if (a.total > b.total) {
+              return -1;
+            }
+            if (a.total < b.total) {
+              return 1;
+            }
+            if (a.resolved_username < b.resolved_username) {
+              return -1;
+            }
+            return 0;
+          });
           v[current_quarter].total = v[current_quarter].total + 1;
         }
         return v;

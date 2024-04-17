@@ -25,9 +25,21 @@ export async function getLeaderboardByQuarter(quarter: string, env: ENV) {
         updated_by: womp.updated_by,
         resolved_username: username ? username : "Unknown",
       };
-    }),
+    })
   );
-  return wompData;
+  return wompData.sort((a, b) => {
+    if (a.total > b.total) {
+      return -1;
+    }
+    if (a.total < b.total) {
+      return 1;
+    }
+    // follow alphabetical order if the totals are the same
+    if (a.resolved_username < b.resolved_username) {
+      return -1;
+    }
+    return 0;
+  });
 }
 
 export async function getQuarters(env: ENV) {

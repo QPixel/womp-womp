@@ -53,6 +53,22 @@ export async function getLeaderboard(env: ENV) {
       resolved_username: username ? username : "Unknown",
     });
   }
+
+  for (const entry of Object.values(wompData)) {
+    entry.data.sort((a, b) => {
+      if (a.total > b.total) {
+        return -1;
+      }
+      if (a.total < b.total) {
+        return 1;
+      }
+      if (a.resolved_username < b.resolved_username) {
+        return -1;
+      }
+      return 0;
+    });
+  }
+
   for (const total of quarterTotals) {
     wompData[total.quarter].total = total.total;
   }
