@@ -1,0 +1,30 @@
+---
+import "../styles/global.css";
+import MainPage from "$lib/pages/main-page.astro";
+import { getCounterData } from "./api/counter";
+import { getLeaderboard } from "./api/leaderboard/all";
+import { getQuarters } from "./api/leaderboard/quarter";
+
+const { env } = Astro.locals.runtime;
+const counterData = await getCounterData(env);
+const leaderboardData = await getLeaderboard(env);
+const leaderboardQuarters = await getQuarters(env);
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Womp Womp</title>
+  </head>
+  <body class="min-h-screen w-full bg-background">
+    <MainPage
+      userId={Astro.cookies.get("id")?.value}
+      counterData={counterData}
+      leaderboardData={leaderboardData}
+      leaderboardQuarters={leaderboardQuarters}
+    />
+  </body>
+</html>
