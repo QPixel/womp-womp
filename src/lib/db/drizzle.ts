@@ -1,6 +1,8 @@
 import { drizzle } from "drizzle-orm/d1";
-import type { ENV } from "src/env";
-import { Womps } from "./schema";
+import { Womps } from "./schema.js";
+import type { ENV } from "../../app.js";
+
+
 
 export const schema = { ...Womps };
 

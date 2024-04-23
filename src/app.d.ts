@@ -2,12 +2,22 @@
 // for information about these interfaces
 declare global {
 	namespace App {
+
 		// interface Error {}
 		// interface Locals {}
 		// interface PageData {}
 		// interface PageState {}
-		// interface Platform {}
+		interface Platform {
+			env?: {
+				WOMP_KV: KVNamespace;
+				WOMP_DB: D1Database;
+			};
+		}
 	}
 }
 
-export {};
+export type ENV = NonNullable<App.Platform["env"]>;
+
+export {
+
+};
