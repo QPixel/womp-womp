@@ -1,4 +1,4 @@
-import type { CounterData } from "src/pages/api/counter";
+import type { CounterData } from "$lib/db/counter";
 import { writable } from "svelte/store";
 
 function getCounter() {

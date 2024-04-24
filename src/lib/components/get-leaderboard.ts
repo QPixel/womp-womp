@@ -1,4 +1,4 @@
-import type { LeaderboardData } from "src/pages/api/leaderboard/all";
+import type { LeaderboardData } from "$lib/db/leaderboard";
 import { writable } from "svelte/store";
 
 function getLeaderboard() {

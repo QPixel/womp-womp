@@ -1,10 +1,15 @@
 <script lang="ts">
 	import * as Tabs from '$lib/components/ui/tabs';
 	import type { LeaderboardData } from '$lib/db/leaderboard';
+	import { InfoIcon } from 'lucide-svelte';
 	import { leaderboard_store } from './get-leaderboard';
+
+	import { Alert, AlertDescription, AlertTitle } from '$lib/components/ui/alert';
 
 	export let leaderboardData: LeaderboardData;
 	export let leaderboardQuarters: string[];
+	console.log(leaderboardData);
+	console.log(leaderboardQuarters);
 	leaderboard_store.init(leaderboardData);
 </script>
 
@@ -13,12 +18,28 @@
 		<Tabs.Root value={leaderboardQuarters[0]}>
 			<Tabs.List>
 				{#each leaderboardQuarters as quarter}
-					<Tabs.Trigger value={quarter}>{quarter}</Tabs.Trigger>
+					{#if quarter === 'all_time'}
+						<Tabs.Trigger value={quarter}>All Time</Tabs.Trigger>
+					{:else}
+						<Tabs.Trigger value={quarter}>
+							{quarter}
+						</Tabs.Trigger>
+					{/if}
 				{/each}
 			</Tabs.List>
 			{#each leaderboardQuarters as quarter}
 				<Tabs.Content value={quarter}>
 					<div class="space-y-4">
+						{#if quarter === 'all_time'}
+							<Alert>
+								<InfoIcon class="h-4 w-4" />
+								<AlertTitle>Heads up!</AlertTitle>
+								<AlertDescription>
+									This feature is still in beta! The all-time leaderboard may not be accurate nor
+									auto update!
+								</AlertDescription>
+							</Alert>
+						{/if}
 						<p class="text-md">
 							Quarter Total: {$leaderboard_store[quarter].total}
 						</p>
