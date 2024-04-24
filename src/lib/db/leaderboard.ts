@@ -25,8 +25,24 @@ export async function getLeaderboard(env: ENV) {
             .from(Womps)
             .groupBy(Womps.quarter_id)
             .orderBy(desc(sql`total`)),
+        db
+            .select({
+                updated_by: Womps.updated_by,
+                total: sql<number>`count(*)`.as("total"),
+            })
+            .from(Womps)
+            .groupBy(Womps.updated_by)
+            .orderBy(desc(sql`total`))
+            .limit(10),
+        db
+            .select({
+                total: sql<number>`count(*)`.as("total"),
+            })
+            .from(Womps)
+            .orderBy(desc(sql`total`)),
     ]);
-    const [leaderboardEntries, quarterTotals] = batchResponse;
+    const [leaderboardEntries, quarterTotals, allTime, allTimeTotal] = batchResponse;
+
 
     const wompData: Record<
         string,
@@ -39,12 +55,26 @@ export async function getLeaderboard(env: ENV) {
             total: number;
         }
     > = {};
+    // Quarterly Leaderboard
     for (const entry of leaderboardEntries) {
         const username = await kv.get<string>(`user:${entry.updated_by}`);
         if (!wompData[entry.quarter]) {
             wompData[entry.quarter] = { data: [], total: 0 };
         }
         wompData[entry.quarter].data.push({
+            total: entry.total,
+            updated_by: entry.updated_by,
+            resolved_username: username ? username : "Unknown",
+        });
+    }
+
+    // All Time Leaderboard
+    for (const entry of allTime) {
+        const username = await kv.get<string>(`user:${entry.updated_by}`);
+        if (!wompData["all_time"]) {
+            wompData["all_time"] = { data: [], total: 0 };
+        }
+        wompData["all_time"].data.push({
             total: entry.total,
             updated_by: entry.updated_by,
             resolved_username: username ? username : "Unknown",
@@ -69,6 +99,8 @@ export async function getLeaderboard(env: ENV) {
     for (const total of quarterTotals) {
         wompData[total.quarter].total = total.total;
     }
+
+    wompData["all_time"].total = allTimeTotal[0].total;
 
     return wompData;
 }

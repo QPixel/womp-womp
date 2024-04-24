@@ -35,8 +35,9 @@
 		<span class="font-serif text-sm italic">&copy; MMXXIV</span>
 		<br />
 		A
-		<a href="https://instagram.com/rileyy.allyn" target="_blank" class="textThing text-blue-400"
-			>@rileyy.allyn</a
-		> project
+		<a href="https://instagram.com/rileyy.allyn" target="_blank" class="textThing text-blue-700">
+			@rileyy.allyn
+		</a>
+		project
 	</footer>
 </main>
