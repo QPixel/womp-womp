@@ -17,7 +17,6 @@ export async function getQuarters(env: ENV) {
         const quartersArr = Array.from(quarters).sort((a, b) =>
             a === currentQuarter ? -1 : b === currentQuarter ? 1 : 0,
         );
-        quartersArr.push("all_time")
         return quartersArr;
 
     }
