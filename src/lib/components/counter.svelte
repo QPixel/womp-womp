@@ -28,13 +28,13 @@
 </script>
 
 <div class="flex flex-col justify-center space-y-4">
-	<h1 class="w-full text-3xl font-semibold text-center">
+	<h1 class="w-full text-center text-3xl font-semibold">
 		Riley has said
 		<br class="md:hidden" />Womp Womp
 	</h1>
 	<h1
 		class="data-[funny-number=true]:rainbow-text mx-auto w-fit rounded-lg border px-9 py-2 text-center text-3xl font-semibold text-red-500"
-		data-funny-number={$counter_store.total == 69}
+		data-funny-number={$counter_store.total.toString().includes('69')}
 	>
 		{$counter_store.total} times
 	</h1>
@@ -49,7 +49,8 @@
 		<Button
 			on:click={increment}
 			size="lg"
-			class="w-full text-xl font-bold bg-red-500 hover:bg-red-300"
+			class="w-full bg-red-500 text-xl font-bold hover:bg-red-300"
+			data-funny-number={$counter_store.total.toString().includes('69')}
 			disabled={didError}>Add to the Total</Button
 		>
 	{/if}
