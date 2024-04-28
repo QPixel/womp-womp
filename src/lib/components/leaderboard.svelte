@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Tabs from '$lib/components/ui/tabs';
 	import type { LeaderboardData } from '$lib/db/leaderboard';
-	import { InfoIcon } from 'lucide-svelte';
+	import { ArrowUpIcon, InfoIcon } from 'lucide-svelte';
 	import { leaderboard_store } from './get-leaderboard';
 
 	import { Alert, AlertDescription, AlertTitle } from '$lib/components/ui/alert';
@@ -58,8 +58,11 @@
 									</p>
 									<ol class="divide-y divide-solid rounded-lg border-2 p-2">
 										{#each $leaderboard_store[quarter].data as player, i}
-											<li class="p-2 text-xl">
-												{i + 1}. {player.resolved_username} - {player.total}
+											<li class="inline-flex w-full p-2 text-xl">
+												<span class="">{i + 1}.</span>
+												<span class="flex-grow pl-6">{player.resolved_username}</span>
+												<span class="px-auto text-left">{player.total}</span>
+												<span class=""><ArrowUpIcon class="h-4 w-4 p-2" color="white" /></span>
 											</li>
 										{/each}
 									</ol>
